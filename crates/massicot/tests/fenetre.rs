@@ -10,7 +10,8 @@ use egui_kittest::kittest::Queryable;
 use massicot::fenetre::Atelier;
 use massicot_essais::{Ligne, Page, document, octets};
 
-/// 12 invented pages: PV 12 (1-3), 13 (4-5), 14 (6-8, page 8 blank), 15 (9-10), 16 (11-12).
+/// 12 invented pages: PV 12 (1-3), 13 (4-5), 14 (6-8, page 8 nearly empty), 15 (9-10), 16 (11-12).
+/// Every page has a text layer: no OCR, so the same report wherever Tesseract is installed or not.
 fn lot(dossier: &Path) -> PathBuf {
     let textes = [
         "L'assemblée s'est réunie à la mairie, sous la présidence du maire.",
@@ -23,7 +24,7 @@ fn lot(dossier: &Path) -> PathBuf {
     let pages: Vec<Page> = (1..=12)
         .map(|n| {
             if n == 8 {
-                return Page::a4(vec![]);
+                return Page::a4(vec![Ligne::new(60.0, 770.0, 11.0, "Fin de la séance à 22 h.")]);
             }
             let mut lignes = Vec::new();
             let mut y = 770.0;
