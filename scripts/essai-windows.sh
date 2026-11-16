@@ -30,4 +30,14 @@ jeton="$("$exe" decouper-regex "$work/essai-scan.pdf" --regex "$regex" --zone-ha
 test -n "$jeton"
 "$exe" decouper-regex "$work/essai-scan.pdf" --regex "$regex" --zone-haute 30 --modele "PV-{num}.pdf" --moteur integre --dossier "$work/pv" --couper "$jeton"
 test -f "$work/pv/PV-1.pdf" && test -f "$work/pv/PV-5.pdf" && test -f "$work/pv/rapport-decoupe.json"
+
+# Serveur MCP d'essai : initialisation, liste des outils, un appel d'outil.
+reponses="$(printf '%s\n' \
+  '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"essai","version":"1"}}}' \
+  '{"jsonrpc":"2.0","method":"notifications/initialized"}' \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+  '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"infos","arguments":{"fichier":"essai.pdf"}}}' \
+  | "$exe" mcp --racine "$work" | tr -d '\r')"
+echo "$reponses" | grep -q '"name":"decouper-regex"'
+echo "$reponses" | grep -q '"pages":5'
 echo "Essai réussi."

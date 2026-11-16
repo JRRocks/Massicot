@@ -77,6 +77,10 @@ pub enum Commande {
     )]
     DecouperRegex(DecouperRegexArgs),
 
+    /// Lance le serveur MCP (stdio) : Claude pilote alors toutes les commandes, dans le dossier racine.
+    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot mcp --racine <DOSSIER>")]
+    Mcp(McpArgs),
+
     /// Mélange deux PDF page à page (recto et verso scannés à part) : 1-A, 2-B, 3-C…
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot melanger <RECTO> <VERSO> --sortie <FICHIER> [--verso-inverse] [options]")]
     Melanger(MelangerArgs),
@@ -95,6 +99,7 @@ pub fn nom(commande: &Commande) -> &'static str {
         Commande::Inverser(_) => "inverser",
         Commande::Melanger(_) => "melanger",
         Commande::Texte(_) => "texte",
+        Commande::Mcp(_) => "mcp",
         Commande::DecouperRegex(_) => "decouper-regex",
         Commande::Ocr(_) => "ocr",
     }
@@ -372,6 +377,13 @@ pub struct DecouperRegexArgs {
 }
 
 #[derive(Debug, Args)]
+pub struct McpArgs {
+    /// Le dossier où travaille le serveur : les chemins donnés par Claude y sont relatifs et ne peuvent pas en sortir.
+    #[arg(long, value_name = "DOSSIER", value_hint = ValueHint::DirPath)]
+    pub racine: PathBuf,
+}
+
+#[derive(Debug, Args)]
 pub struct MelangerArgs {
     /// Le premier PDF (par exemple les rectos).
     #[arg(value_name = "RECTO", value_hint = ValueHint::FilePath)]
@@ -481,6 +493,7 @@ pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
             }
             rendu(rapport, |r| r.texte())
         }
+        Commande::Mcp(_) => Err(Erreur::new("le serveur MCP se lance depuis la ligne de commande : massicot mcp --racine <DOSSIER>")),
         Commande::Melanger(a) => {
             let alternance = ops::melange::Alternance { pas_premier: a.pas_recto, pas_second: a.pas_verso, second_inverse: a.verso_inverse };
             rendu(ops::melange::melanger(&a.premier, &a.second, alternance, &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())

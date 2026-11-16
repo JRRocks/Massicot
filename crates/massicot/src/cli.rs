@@ -51,6 +51,13 @@ pub struct Cli {
     commande: Option<Commande>,
 }
 
+impl Cli {
+    /// The command given, if any.
+    pub fn commande(&self) -> Option<&Commande> {
+        self.commande.as_ref()
+    }
+}
+
 /// Entry point of the `massicot` executable.
 pub fn main() -> ExitCode {
     run(std::env::args_os())
@@ -72,6 +79,16 @@ where
         print!("{}", cmd.render_help());
         return ExitCode::SUCCESS;
     };
+    if let Commande::Mcp(a) = &commande {
+        let resultat = crate::mcp::Racine::new(&a.racine).and_then(|r| crate::mcp::servir(&r));
+        return match resultat {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                eprintln!("massicot : {e}");
+                ExitCode::from(1)
+            }
+        };
+    }
     match executer(&commande) {
         Ok((json, texte)) => {
             if cli.json {

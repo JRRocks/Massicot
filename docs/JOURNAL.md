@@ -60,13 +60,25 @@
     à côté des fichiers. Lecture tolérante pour le moteur OCR intégré (« ? » accepté à la place
     d'une lettre ou d'un symbole, jamais d'un chiffre). Essai sur le runner Windows : mode à blanc
     puis découpe d'un scan généré.
-- **Décisions** : D-12, D-13, D-14, D-15, D-16, D-17.
-- **Vérifications** : `cargo test --workspace` vert en session ; contrôle « dépôt public »
-  sans signalement.
-- **Non vérifié sur le PC** : tout (aucun essai sur Windows réel).
-- **Problèmes et dette** : l'essai de découpe sur le runner Windows arrive avec la commande de
-  découpe (P2.1).
-- **Prochaine étape** : P1.2.
+  - P2.5 : `massicot mcp --racine DIR`, serveur MCP stdio (JSON-RPC, un message par ligne) ;
+    un outil par commande, schéma tiré de la définition de la commande ; outil `lister` ;
+    chemins confinés au dossier racine (`..`, liens et chemins absolus extérieurs refusés) ;
+    configuration pour Claude Code sous Windows dans `README.md` (aussi dans le zip, `LISEZMOI.md`).
+    Essai sur le runner Windows : initialisation, liste des outils et un appel.
+- **Décisions** : D-12 à D-18.
+- **Vérifications** : `cargo test --workspace` vert en session à chaque tâche (49 tests à la
+  fin, dont l'OCR intégré et Tesseract `fra` sur des lots scannés inventés) ; CI verte à chaque
+  push ; contrôle « dépôt public » avant chaque commit (seuls signalements : contenu public des
+  crates tierces copiées, adresses d'auteurs et exemples de lopdf, laissés tels quels).
+- **Non vérifié sur le PC** : tout ce qui demande le vrai PC (liste R1 à R3 du plan) : lancement
+  de l'exe hors du runner de la CI, configuration MCP dans Claude Code, OCR sur de vrais scans.
+- **Problèmes et dette** : le moteur OCR intégré lit les accents comme « ? » (compensé par la
+  lecture tolérante, signalé dans les rapports) et invente des mots sur les taches d'un scan
+  bruité ; Tesseract perd les en-têtes d'un scan très bruité et penché (pas de prétraitement).
+  Avertissement de compilation dans `vendor/hayro-interpret` (import inutilisé), laissé tel quel
+  (code copié).
+- **Prochaine étape** : essais R1 à R3 sur le PC ; P3.1 (maquettes de la fenêtre, plusieurs
+  variantes, à valider avant tout code) ; P5.1 sur les vrais lots.
 
 ---
 
