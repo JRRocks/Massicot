@@ -65,6 +65,13 @@
     chemins confinés au dossier racine (`..`, liens et chemins absolus extérieurs refusés) ;
     configuration pour Claude Code sous Windows dans `README.md` (aussi dans le zip, `LISEZMOI.md`).
     Essai sur le runner Windows : initialisation, liste des outils et un appel.
+  - P2.4 vérifiée : CI verte (run 6 : lots scannés inventés lus par l'OCR intégré et par
+    Tesseract sous Linux ; mode à blanc puis découpe d'un scan sur le runner Windows),
+    Release `v0.1.6`.
+  - P2.5 vérifiée sur le runner Windows (run 7) : serveur lancé depuis le paquet, dossier racine
+    `C:\Users\…\Temp\…` bien lu, liste des outils et un appel `infos` ; Release `v0.1.7`,
+    puis `v0.1.8` (chemins d'exemple neutres dans un test). Le zip contient `LISEZMOI.md`.
+  - Brief `docs/BRIEF-P1-P2.md` supprimé : P1.1 à P2.5 faits.
 - **Décisions** : D-12 à D-18.
 - **Vérifications** : `cargo test --workspace` vert en session à chaque tâche (49 tests à la
   fin, dont l'OCR intégré et Tesseract `fra` sur des lots scannés inventés) ; CI verte à chaque
