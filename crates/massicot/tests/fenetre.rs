@@ -3,6 +3,7 @@
 //! tests/snapshots/ (`UPDATE_SNAPSHOTS=1` rewrites them).
 
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use eframe::egui;
 use egui_kittest::Harness;
@@ -44,6 +45,14 @@ fn lot(dossier: &Path) -> PathBuf {
     chemin
 }
 
+/// One screen test at a time: software Vulkan (the CI's lavapipe) may crash when several
+/// renderers are created at once.
+static UN_A_LA_FOIS: Mutex<()> = Mutex::new(());
+
+fn seul() -> std::sync::MutexGuard<'static, ()> {
+    UN_A_LA_FOIS.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
 /// A fixed folder: the paths shown in the window are the same at every run.
 fn dossier(nom: &str) -> PathBuf {
     let d = std::env::temp_dir().join(nom);
@@ -80,6 +89,7 @@ fn attendre(h: &mut Harness<'static, Atelier>, pret: fn(&Atelier) -> bool) {
 
 #[test]
 fn main_screen_with_an_open_pdf() {
+    let _seul = seul();
     let pdf = lot(&dossier("massicot-fenetre-principale"));
     let mut h = harnais(&pdf);
     h.snapshot("fenetre-principale");
@@ -87,6 +97,7 @@ fn main_screen_with_an_open_pdf() {
 
 #[test]
 fn cut_at_each_header_in_four_steps() {
+    let _seul = seul();
     let pdf = lot(&dossier("massicot-fenetre-decoupe"));
     let mut h = harnais(&pdf);
     h.get_by_label("Découpe par en-tête").click();
@@ -112,6 +123,7 @@ fn cut_at_each_header_in_four_steps() {
 
 #[test]
 fn extract_the_selected_pages() {
+    let _seul = seul();
     let pdf = lot(&dossier("massicot-fenetre-extraire"));
     let mut h = harnais(&pdf);
     h.get_by_label("Extraire des pages").click();
