@@ -5,6 +5,44 @@
 
 ---
 
+## 2026-11-16 · Premier lot réel : découpe par méthode LLM et par méthode déterministe
+
+- **Branche et commit** : `main` (docs seulement ; aucun code de Massicot touché).
+- **Objectif** : sur un vrai lot de PV (6 fichiers scannés, 264 pages, dans `essais-prives/`, hors
+  dépôt), fusionner, couper un fichier par PV (page portant le tableau A/B/C du formulaire),
+  nommer chaque fichier `PV` + les 7 chiffres du numéro d'enregistrement après l'année ; le faire
+  par deux méthodes en parallèle pour juger si la méthode déterministe suffit.
+- **Réalisé** :
+  - Fusion par `massicot fusionner` (ordre des fichiers 1 à 6) : 264 pages.
+  - Méthode LLM : trois agents lisent à l'œil le haut de chaque page (images rendues à 110 dpi),
+    sans OCR ; découpe par `massicot extraire`.
+  - Méthode déterministe : script PowerShell (hors dépôt, `essais-prives/_outil-deterministe/`)
+    qui pilote `massicot.exe` : texte du haut de page (40 %) par la couche texte du PDF (263 pages
+    sur 264 en ont une, posée par le scanner), puis OCR intégré imposé sur les pages candidates ;
+    9 ancres tolérantes du tableau A/B/C ; début de PV si au moins 4 ancres dans au moins 2 cases ;
+    numéro cherché près de « enregistrement » (année, séparateur éventuel, 7 chiffres).
+- **Vérifications** :
+  - Découpe : 56 blocs pour chaque méthode, **mêmes 56 coupures** ; 264 pages couvertes.
+  - Noms : 48 sur 56 identiques. Les 8 écarts sont tous des « numéro introuvable » côté
+    déterministe : 7 numéros manuscrits lus par la méthode LLM, et une case vide (vérifiée à l'œil :
+    la méthode LLM a raison, « sans numéro »). Aucun numéro différent entre les deux méthodes là où
+    les deux en lisent un.
+  - Méthode déterministe : 37 lus, 10 sans numéro, 9 introuvables ; 40 s pour le lot ; deux
+    exécutions, rapport identique.
+  - Méthode LLM : 44 lus, 11 sans numéro, 1 illisible ; numéros manuscrits non revérifiés.
+- **Non vérifié** : le jugement de l'utilisateur sur les deux dossiers de résultats.
+- **Problèmes et dette** :
+  - `decouper-regex --rapport` refuse d'écrire si le fichier de rapport existe déjà (il faut l'effacer
+    avant chaque relance) : à corriger (accepter `--ecraser`).
+  - Le formulaire existe en deux exemplaires dans certains PV (second exemplaire sans numéro, ou
+    même numéro) : chaque tableau A/B/C ouvre un fichier, selon la règle donnée par l'utilisateur.
+  - Les numéros manuscrits restent hors de portée de l'OCR intégré.
+- **Prochaine étape** : l'utilisateur compare les dossiers « Résultats - méthode LLM » et
+  « Résultats - méthode regex » ; selon son avis, intégrer la méthode déterministe à Massicot
+  (voir `docs/idees-futur.md`).
+
+---
+
 ## 2026-11-16 · Session PC : installation de la 0.1.9, essais R1 et R2
 
 - **Branche et commit** : `main` (docs seulement ; aucun code touché).
