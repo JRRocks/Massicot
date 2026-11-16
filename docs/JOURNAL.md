@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-11-16 · Session cloud P4.1 : fonctions de PDFsam Enhanced validées
+
+- **Branche et commit** : `main` (docs seulement).
+- **Objectif** : P4.1 du brief `docs/BRIEF-P3-P4.md`, après la livraison de l'installateur.
+- **Réalisé** :
+  - Fonctions de PDFsam Enhanced 7.0 relevées sur pdfsam.org (hôte ajouté au réseau de
+    l'environnement cloud, avec l'accord de l'utilisateur) : lecteur, création, conversion, édition,
+    insertion, commentaires, formulaires, sécurité, OCR ; caviardage d'après la page « PDF editor ».
+  - Comparées aux crates de PdfCraft (clone en lecture, révision `efd2655`) : `optimize`, `create`,
+    `edit`, `export`, `compare`, `annot`, `forms`, `xfdf`, `redact`, `sign`, `crypt` ; et aux
+    moteurs déjà copiés (`organize` pour le recadrage et l'insertion, `render` pour l'aperçu).
+  - Liste en image (apport, effort, moteur) et trois questions ; réponses : lots 1 et 4, fenêtre
+    d'abord, fenêtre centrée sur les outils de PDFsam Basic avec aperçu (D-25, D-26). Plan : P4.1
+    fait, P4.2 et P4.3 ajoutées, critère de P3.2 revu.
+- **Prochaine étape** : P3.1, maquettes de la fenêtre (plusieurs variantes), selon D-26.
+
+---
+
 ## 2026-11-16 · Clôture P1.3 : installateur publié (Release v0.1.21)
 
 - **Branche et commit** : `main` (docs seulement).

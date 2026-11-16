@@ -23,8 +23,10 @@ procès-verbal par fichier), pilotable par Claude (CLI, MCP) et par l'utilisateu
 | P2.4 | Découpe par regex : rapport à blanc puis découpe, nom de fichier tiré de la regex | Sur un lot d'essai de PV inventés, un fichier par PV, et le rapport dit quelle page ouvre quel PV | ✅ |
 | P2.5 | Serveur MCP (stdio) qui expose toutes les commandes | Claude pilote Massicot depuis le PC | 🖥️ |
 | P3.1 | Maquettes de la fenêtre (plusieurs variantes) | L'utilisateur choisit et dit « oui » | ⬜ |
-| P3.2 | Fenêtre Windows selon la maquette validée | L'utilisateur fait une découpe par en-tête depuis la fenêtre | ⬜ |
-| P4.1 | Liste des fonctions de PDFsam Enhanced utiles ici, soumise à l'utilisateur | L'utilisateur valide la liste et l'ordre | ⬜ |
+| P3.2 | Fenêtre Windows selon la maquette validée : outils de PDFsam Basic (dont la découpe par en-tête) avec aperçu des pages (D-26) | L'utilisateur ouvre un PDF, en voit les pages et lance depuis la fenêtre fusion, découpe, extraction, rotation, mélange, OCR et découpe par en-tête | ⬜ |
+| P4.1 | Liste des fonctions de PDFsam Enhanced utiles ici, soumise à l'utilisateur | L'utilisateur valide la liste et l'ordre | ✅ |
+| P4.2 | Lot 1 « ranger les scans » (D-25), après P3.2 : compresser ; recadrer, marges, format de page ; créer un PDF depuis des images ; insérer les pages d'un autre PDF ; numéros de page, en-tête, pied de page, filigrane. En ligne de commande, MCP et fenêtre | Chaque fonction produit le PDF attendu sur les PDF d'essai et se lance depuis la fenêtre | ⬜ |
+| P4.3 | Lot 4 « dans la fenêtre » (D-25), après P4.2 : modifier le texte et les polices ; commentaires (notes, tampons, surlignage) ; formulaires (remplir, créer, exporter les données) | L'utilisateur corrige un mot, annote une page et remplit un formulaire depuis la fenêtre | ⬜ |
 | P5.1 | Essais sur les vrais lots de PV de l'utilisateur (hors dépôt, `essais-prives/`) | Les PV sortent un par fichier, sans erreur de coupe | 🔄 premier lot fait (journal du 2026-11-16), en attente du jugement de l'utilisateur |
 
 ## À vérifier sur le PC
