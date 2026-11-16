@@ -16,8 +16,8 @@ procès-verbal par fichier), pilotable par Claude (CLI, MCP) et par l'utilisateu
 |---|---|---|---|
 | P1.1 | Squelette Rust + CI : tests, puis compilation Windows, puis publication | Chaque push sur `main` publie `Massicot.<version>.zip` dans les Releases ; `massicot --version` affiche ce numéro | ✅ |
 | P1.2 | Reprise des moteurs de PdfCraft (copie, licences, `ATTRIBUTION.md`, révision source) | La CI reste verte ; `massicot infos <fichier.pdf>` décrit un PDF | ✅ |
-| P2.1 | Fonctions PDFsam Basic en ligne de commande : fusion, extraction, découpe (toutes les N pages, avant des pages, par signets d'un niveau choisi, par taille), rotation (dont paires/impaires), suppression, déplacement, inversion | Chaque commande produit le PDF attendu sur les PDF d'essai générés | 🔄 |
-| P2.2 | Mélange alterné (recto et verso scannés à part, second fichier inversé en option) | Deux PDF de 3 pages donnent un PDF 1-A,2-B,3-C… | ⬜ |
+| P2.1 | Fonctions PDFsam Basic en ligne de commande : fusion, extraction, découpe (toutes les N pages, avant des pages, par signets d'un niveau choisi, par taille), rotation (dont paires/impaires), suppression, déplacement, inversion | Chaque commande produit le PDF attendu sur les PDF d'essai générés | ✅ |
+| P2.2 | Mélange alterné (recto et verso scannés à part, second fichier inversé en option) | Deux PDF de 3 pages donnent un PDF 1-A,2-B,3-C… | 🔄 |
 | P2.3 | OCR des pages scannées (texte invisible ajouté) et texte par page | Un PDF image d'essai devient cherchable | ⬜ |
 | P2.4 | Découpe par regex : rapport à blanc puis découpe, nom de fichier tiré de la regex | Sur un lot d'essai de PV inventés, un fichier par PV, et le rapport dit quelle page ouvre quel PV | ⬜ |
 | P2.5 | Serveur MCP (stdio) qui expose toutes les commandes | Claude pilote Massicot depuis le PC | ⬜ |

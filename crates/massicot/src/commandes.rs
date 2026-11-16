@@ -58,6 +58,10 @@ pub enum Commande {
     /// Inverse l'ordre des pages (toutes, ou une sélection).
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot inverser <FICHIER> [--pages <PAGES> | --paires | --impaires] --sortie <FICHIER> [options]")]
     Inverser(InverserArgs),
+
+    /// Mélange deux PDF page à page (recto et verso scannés à part) : 1-A, 2-B, 3-C…
+    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot melanger <RECTO> <VERSO> --sortie <FICHIER> [--verso-inverse] [options]")]
+    Melanger(MelangerArgs),
 }
 
 /// The name each command has on the command line (and as an MCP tool).
@@ -71,6 +75,7 @@ pub fn nom(commande: &Commande) -> &'static str {
         Commande::Supprimer(_) => "supprimer",
         Commande::Deplacer(_) => "deplacer",
         Commande::Inverser(_) => "inverser",
+        Commande::Melanger(_) => "melanger",
     }
 }
 
@@ -247,6 +252,32 @@ pub struct InverserArgs {
     pub ecriture: Ecriture,
 }
 
+#[derive(Debug, Args)]
+pub struct MelangerArgs {
+    /// Le premier PDF (par exemple les rectos).
+    #[arg(value_name = "RECTO", value_hint = ValueHint::FilePath)]
+    pub premier: PathBuf,
+
+    /// Le second PDF (par exemple les versos).
+    #[arg(value_name = "VERSO", value_hint = ValueHint::FilePath)]
+    pub second: PathBuf,
+
+    /// Lit le second PDF de la dernière page à la première (versos scannés en ordre inverse).
+    #[arg(long)]
+    pub verso_inverse: bool,
+
+    /// Pages prises au premier PDF à chaque tour (1 par défaut).
+    #[arg(long, value_name = "N", default_value_t = 1, hide_default_value = true, value_parser = entier_positif)]
+    pub pas_recto: usize,
+
+    /// Pages prises au second PDF à chaque tour (1 par défaut).
+    #[arg(long, value_name = "N", default_value_t = 1, hide_default_value = true, value_parser = entier_positif)]
+    pub pas_verso: usize,
+
+    #[command(flatten)]
+    pub ecriture: Ecriture,
+}
+
 fn entier_positif(s: &str) -> Result<usize, String> {
     s.trim().parse::<usize>().ok().filter(|n| *n > 0).ok_or_else(|| format!("« {s} » n'est pas un nombre entier supérieur à zéro"))
 }
@@ -299,6 +330,10 @@ pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
         }
         Commande::Inverser(a) => {
             rendu(ops::pages::inverser(&a.fichier, &a.selection.selection(), &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())
+        }
+        Commande::Melanger(a) => {
+            let alternance = ops::melange::Alternance { pas_premier: a.pas_recto, pas_second: a.pas_verso, second_inverse: a.verso_inverse };
+            rendu(ops::melange::melanger(&a.premier, &a.second, alternance, &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())
         }
     }
 }

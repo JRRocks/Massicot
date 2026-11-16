@@ -32,6 +32,9 @@
     (`--paires`, `--impaires`, `--pages`), `supprimer`, `deplacer` (`--vers debut|fin|N`),
     `inverser` ; jamais d'écrasement sans `--ecraser` ; noms de fichiers sûrs pour Windows ;
     essai de découpe ajouté sur le runner Windows.
+  - P2.1 vérifiée : CI verte (run 3, découpe d'essai réussie sur le runner Windows), Release `v0.1.3`.
+  - P2.2 : commande `melanger` (recto et verso scannés à part ; `--verso-inverse` ; pas réglables
+    `--pas-recto`, `--pas-verso` ; le reste du plus long fichier suit).
 - **Décisions** : D-12, D-13, D-14, D-15.
 - **Vérifications** : `cargo test --workspace` vert en session ; contrôle « dépôt public »
   sans signalement.
