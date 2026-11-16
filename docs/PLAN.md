@@ -30,6 +30,6 @@ procès-verbal par fichier), pilotable par Claude (CLI, MCP) et par l'utilisateu
 
 | N° | Depuis la version | Ce qu'il fait | Ce qu'il doit voir | État |
 |---|---|---|---|---|
-| R1 | 0.1.7 | Télécharge le zip de la dernière Release, le décompresse, lance `.\massicot.exe --version` dans PowerShell | `massicot 0.1.<n>` (SmartScreen peut avertir une fois) | à essayer |
-| R2 | 0.1.7 | `claude mcp add --scope user massicot -- "<chemin>\massicot.exe" mcp --racine "<dossier des PDF>"` (README), puis `claude mcp list` | `massicot … ✔ Connected` ; Claude décrit un PDF du dossier | à essayer |
+| R1 | 0.1.7 | Télécharge le zip de la dernière Release, le décompresse, lance `.\massicot.exe --version` dans PowerShell | `massicot 0.1.<n>` (SmartScreen peut avertir une fois) | ✅ 2026-11-16, 0.1.9 installée dans `%LOCALAPPDATA%\Programs\Massicot` |
+| R2 | 0.1.7 | `claude mcp add --scope user massicot -- "<chemin>\massicot.exe" mcp --racine "<dossier des PDF>"` (README), puis `claude mcp list` | `massicot … ✔ Connected` ; Claude décrit un PDF du dossier | 🔄 2026-11-16, 0.1.9 : ajouté (racine `essais-prives/`), `✔ Connected` vu ; reste à voir Claude décrire un PDF, dans une session ouverte après l'ajout |
 | R3 | 0.1.7 | Demande à Claude un mode à blanc de `decouper-regex` sur un vrai lot de PV scannés (dans `essais-prives/`) | Un bloc par PV, en-têtes lus (accents en « ? » avec le moteur intégré) ; à faire avant P5.1 | à essayer |

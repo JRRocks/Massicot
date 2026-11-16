@@ -5,6 +5,43 @@
 
 ---
 
+## 2026-11-16 · Session PC : installation de la 0.1.9, essais R1 et R2
+
+- **Branche et commit** : `main` (docs seulement ; aucun code touché).
+- **Objectif** : installer la Release sur le PC, vérifier R1 et R2, préparer R3.
+- **Réalisé** :
+  - Zip `Massicot.0.1.9.zip` de la Release `v0.1.9` décompressé dans
+    `%LOCALAPPDATA%\Programs\Massicot` (dossier fixe : une mise à jour se décompresse par-dessus).
+  - R1 : `massicot.exe --version` → `massicot 0.1.9`. Pas d'avertissement SmartScreen vu
+    (lancement depuis un terminal).
+  - Essai rapide sur deux PDF inventés, fabriqués dans un dossier temporaire hors dépôt (Python
+    absent du PC : fabriqués par `uv` avec reportlab et Pillow) : un PDF texte de 6 pages
+    (3 en-têtes) et un scan d'images de 5 pages (2 en-têtes, léger bruit, 0,6° de travers).
+    `infos` correct ; `decouper --toutes 2` → 3 fichiers ; `decouper-regex` à blanc sur le PDF
+    texte → 3 blocs justes ; `texte` sur le scan (OCR intégré) lit l'en-tête avec « ? » à la
+    place des accents, comme prévu ; `decouper-regex --zone-haute 20` à blanc sur le scan →
+    2 blocs justes, alerte « ? » sur chaque en-tête ; découpe par jeton → 2 fichiers et
+    `rapport-decoupe.json`.
+  - Sans `--zone-haute`, un renvoi en bas de page (« procès-verbal n° 999 ») ouvre un faux bloc
+    sur chaque page qui le porte (5 blocs au lieu de 2, noms suffixés -2, -3) : comportement
+    attendu, la zone haute est indispensable sur les vrais lots.
+  - `essais-prives/` créé, ignoré par git (`git check-ignore` : règle `.gitignore` ligne 6).
+  - R2 : serveur MCP essayé à la main (initialisation, liste des 14 outils, appel `infos` sans
+    erreur), puis, avec l'accord de l'utilisateur, `claude mcp add --scope user massicot` avec la
+    racine `essais-prives/` ; `claude mcp list` → `massicot … ✔ Connected`.
+  - Tesseract absent du PC ; non installé (à proposer seulement si l'OCR intégré déçoit sur les
+    vrais scans).
+- **Vérifications** : sorties des commandes lues en session (ci-dessus).
+- **Non vérifié** : Claude qui décrit un PDF par le MCP (le serveur ne paraît que dans une
+  session ouverte après l'ajout) ; R3 (vrais scans).
+- **Anomalies** : la commande `claude` n'est pas dans le PATH de ce PC (Claude Code y vient de
+  l'application de bureau, qui garde son exécutable dans son propre dossier de données) :
+  la commande `claude mcp add` du README ne marche pas telle quelle dans PowerShell. Le README
+  pourrait le dire, ou donner l'équivalent `.mcp.json` / `~/.claude.json` en premier.
+- **Prochaine étape** : R3 puis P5.1 sur le premier vrai lot déposé dans `essais-prives/`.
+
+---
+
 ## 2026-11-16 · Session cloud P1.1 à P2.5 : squelette, moteurs, commandes PDF, découpe par en-tête, MCP
 
 - **Branche et commit** : `main` (push direct, D-04 et brief).
