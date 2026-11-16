@@ -326,9 +326,9 @@ mod tests {
 
     #[test]
     fn windows_verbatim_paths_read_the_usual_way() {
-        assert_eq!(sans_prefixe_verbatim(r"\\?\C:\Users\x\PDF").as_deref(), Some(r"C:\Users\x\PDF"));
+        assert_eq!(sans_prefixe_verbatim(r"\\?\C:\Users\<utilisateur>\PDF").as_deref(), Some(r"C:\Users\<utilisateur>\PDF"));
         assert_eq!(sans_prefixe_verbatim(r"\\?\UNC\serveur\partage\PDF").as_deref(), Some(r"\\serveur\partage\PDF"));
-        assert_eq!(sans_prefixe_verbatim("/home/x/PDF"), None);
+        assert_eq!(sans_prefixe_verbatim("/srv/pdf"), None);
         assert_eq!(sans_prefixe_verbatim(r"\\?\Volume{abc}\x"), None);
     }
 
