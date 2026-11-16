@@ -35,3 +35,17 @@ fn unknown_argument_is_reported_in_french() {
     assert!(err.contains("argument inconnu : --inconnu"), "{err}");
     assert!(!err.contains("error:"), "{err}");
 }
+
+#[test]
+fn welcome_of_the_start_menu_console() {
+    let out = massicot(&["accueil"]);
+    assert!(out.status.success());
+    let text = String::from_utf8_lossy(&out.stdout);
+    assert!(text.starts_with(&format!("Massicot {} · boîte à outils PDF\n", massicot::VERSION)), "{text}");
+    assert!(text.contains("massicot decouper-regex lot.pdf --regex \"PROCÈS-VERBAL N° (?<num>\\d+)\" --zone-haute 30\n"), "{text}");
+    assert!(text.contains("décrit un PDF") && text.contains("faites glisser un PDF"), "{text}");
+    assert!(!text.contains('\x1b'), "no colours when the output is not a console: {text}");
+    // Hidden from the help: it is the shortcut's, not a command to learn.
+    let aide = String::from_utf8_lossy(&massicot(&["--aide"]).stdout).to_string();
+    assert!(!aide.contains("accueil"), "{aide}");
+}

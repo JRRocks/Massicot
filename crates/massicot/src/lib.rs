@@ -2,6 +2,7 @@
 //!
 //! User-facing messages are French; code and comments are English.
 
+pub mod accueil;
 pub mod cli;
 pub mod commandes;
 pub mod erreur;

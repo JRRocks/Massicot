@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Massicot icon (MIT OR Apache-2.0). Exported by scripts/icone.py to massicot.ico and the installer images. -->
+  <defs>
+    <linearGradient id="fond" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2F6FD6"/><stop offset="1" stop-color="#1B3F86"/>
+    </linearGradient>
+    <clipPath id="haut"><polygon points="0,0 256,0 256,98 0,170"/></clipPath>
+    <clipPath id="bas"><polygon points="0,170 256,98 256,256 0,256"/></clipPath>
+    <polygon id="m" points="56,200 56,58 96,58 128,122 160,58 200,58 200,200 166,200 166,118 138,172 118,172 90,118 90,200"/>
+  </defs>
+  <rect x="12" y="12" width="232" height="232" rx="54" fill="url(#fond)"/>
+  <g clip-path="url(#bas)" transform="translate(3 8)"><use href="#m" fill="#FFFFFF"/></g>
+  <g clip-path="url(#haut)" transform="translate(-3 -8)"><use href="#m" fill="#FFFFFF"/></g>
+  <line x1="30" y1="175" x2="226" y2="120" stroke="#F2B705" stroke-width="12" stroke-linecap="round"/>
+</svg>

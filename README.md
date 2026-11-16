@@ -10,16 +10,27 @@ une fenêtre viendra ensuite.
 
 ## Installer (Windows 64 bits)
 
-1. Téléchargez le dernier `Massicot.<version>.zip` :
+1. Téléchargez le dernier `Massicot.<version>.exe` :
    https://github.com/JRRocks/Massicot/releases/latest
-2. Décompressez-le, par exemple dans `C:\Users\<utilisateur>\Outils\Massicot`.
-   `massicot.exe` et le dossier `modeles\` (OCR) doivent rester côte à côte.
-3. Ouvrez un terminal dans ce dossier et tapez `.\massicot.exe --aide`.
-   L'exécutable n'est pas signé : au premier lancement, Windows SmartScreen peut avertir
-   (« Informations complémentaires », puis « Exécuter quand même »).
+2. Lancez-le : trois écrans, aucun droit administrateur demandé. L'installateur n'est pas signé :
+   au premier lancement, Windows SmartScreen peut avertir (« Informations complémentaires », puis
+   « Exécuter quand même »).
+3. Massicot s'installe toujours dans `%LOCALAPPDATA%\Programs\Massicot`. Il apparaît dans le menu
+   Démarrer (le raccourci ouvre une console « Massicot » en attendant la fenêtre) et dans
+   Paramètres ▸ Applications ▸ Applications installées ; la commande `massicot` marche dans tout
+   nouveau terminal (dossier ajouté au `PATH` de l'utilisateur).
 
-Pour mettre à jour, remplacez le dossier par celui de la nouvelle version : Massicot ne garde
-aucune donnée. `massicot --version` affiche le numéro installé.
+**Mettre à jour** : lancez l'installateur de la nouvelle version, par-dessus ; rien à désinstaller
+avant. Si Claude Code utilise Massicot à ce moment, il passe à la nouvelle version à son prochain
+démarrage. `massicot --version` affiche le numéro installé.
+
+**Désinstaller** : Paramètres ▸ Applications ▸ Applications installées ▸ Massicot ▸ Désinstaller.
+Le dossier, le raccourci et l'entrée du `PATH` sont retirés ; vos PDF ne sont pas touchés.
+
+**Sans installation** : le même contenu existe en zip (`Massicot.<version>.zip`). Décompressez-le
+où vous voulez (`massicot.exe` et le dossier `modeles\` côte à côte), puis, dans un terminal ouvert
+dans ce dossier : `.\massicot.exe --aide`. L'installateur reprend une copie décompressée à la main
+dans `%LOCALAPPDATA%\Programs\Massicot`.
 
 ## Commandes
 
@@ -96,12 +107,12 @@ chemins sont relatifs au dossier racine et n'en sortent pas.
 l'invite de commandes :
 
 ```
-claude mcp add --scope user massicot -- "C:\Users\<utilisateur>\Outils\Massicot\massicot.exe" mcp --racine "C:\Users\<utilisateur>\Documents\PDF"
+claude mcp add --scope user massicot -- "C:\Users\<utilisateur>\AppData\Local\Programs\Massicot\massicot.exe" mcp --racine "C:\Users\<utilisateur>\Documents\PDF"
 ```
 
-Remplacez les deux chemins : celui de `massicot.exe`, et le dossier où sont vos PDF (le serveur
-n'accède qu'à lui). Vérifiez ensuite avec `claude mcp list` (ligne `massicot … ✔ Connected`),
-ou `/mcp` dans une session.
+Remplacez `<utilisateur>` et le dossier où sont vos PDF (le serveur n'accède qu'à lui) ; le premier
+chemin est celui de l'installateur (avec le zip : là où vous l'avez décompressé). Vérifiez ensuite
+avec `claude mcp list` (ligne `massicot … ✔ Connected`), ou `/mcp` dans une session.
 
 Pour un seul projet, l'équivalent dans le fichier `.mcp.json` du projet (barres obliques
 inverses doublées ; Claude Code demande d'approuver ce serveur au premier lancement) :
@@ -110,7 +121,7 @@ inverses doublées ; Claude Code demande d'approuver ce serveur au premier lance
 {
   "mcpServers": {
     "massicot": {
-      "command": "C:\\Users\\<utilisateur>\\Outils\\Massicot\\massicot.exe",
+      "command": "C:\\Users\\<utilisateur>\\AppData\\Local\\Programs\\Massicot\\massicot.exe",
       "args": ["mcp", "--racine", "C:\\Users\\<utilisateur>\\Documents\\PDF"]
     }
   }

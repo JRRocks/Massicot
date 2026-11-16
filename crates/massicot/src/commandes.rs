@@ -84,6 +84,10 @@ pub enum Commande {
     /// Mélange deux PDF page à page (recto et verso scannés à part) : 1-A, 2-B, 3-C…
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot melanger <RECTO> <VERSO> --sortie <FICHIER> [--verso-inverse] [options]")]
     Melanger(MelangerArgs),
+
+    /// Accueil de la console ouverte par le raccourci du menu Démarrer.
+    #[command(hide = true, help_template = CMD_TEMPLATE, override_usage = "massicot accueil")]
+    Accueil,
 }
 
 /// The name each command has on the command line (and as an MCP tool).
@@ -102,6 +106,7 @@ pub fn nom(commande: &Commande) -> &'static str {
         Commande::Mcp(_) => "mcp",
         Commande::DecouperRegex(_) => "decouper-regex",
         Commande::Ocr(_) => "ocr",
+        Commande::Accueil => "accueil",
     }
 }
 
@@ -494,6 +499,7 @@ pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
             rendu(rapport, |r| r.texte())
         }
         Commande::Mcp(_) => Err(Erreur::new("le serveur MCP se lance depuis la ligne de commande : massicot mcp --racine <DOSSIER>")),
+        Commande::Accueil => Ok((serde_json::json!({ "accueil": crate::accueil::texte_simple() }), crate::accueil::texte())),
         Commande::Melanger(a) => {
             let alternance = ops::melange::Alternance { pas_premier: a.pas_recto, pas_second: a.pas_verso, second_inverse: a.verso_inverse };
             rendu(ops::melange::melanger(&a.premier, &a.second, alternance, &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())

@@ -2,3 +2,7 @@
 *.pdf binary
 *.png binary
 *.onnx binary
+*.ico binary
+*.bmp binary
+# Inno Setup script: UTF-8 with BOM, Windows line endings
+*.iss text eol=crlf

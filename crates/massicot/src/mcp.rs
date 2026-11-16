@@ -16,7 +16,7 @@ use crate::erreur::{Erreur, Resultat};
 /// Protocol revisions this server speaks (the client's is used when known).
 const PROTOCOLES: [&str; 4] = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 /// Commands that are not tools.
-const HORS_OUTILS: [&str; 1] = ["mcp"];
+const HORS_OUTILS: [&str; 2] = ["mcp", "accueil"];
 /// Arguments that are not tool parameters.
 const HORS_PARAMETRES: [&str; 3] = ["aide", "version", "json"];
 

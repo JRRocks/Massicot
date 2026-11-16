@@ -5,6 +5,69 @@
 
 ---
 
+## 2026-11-16 · Session cloud P1.3 : installateur Windows
+
+- **Branche et commit** : mise au point sur `claude/modest-edison-y0moby` (CI lancée à la main,
+  sans publication), puis push direct sur `main`.
+- **Objectif** : un vrai programme d'installation `.exe`, pour que Massicot s'installe comme toute
+  application (menu Démarrer, Applications installées, désinstalleur), publié avec le zip.
+- **Aperçus validés avant le code** (images envoyées, trois questions) : icône 1 (« M » tranché),
+  assistant en trois écrans tel que montré, raccourci du menu Démarrer = console « Massicot » qui
+  reste ouverte. L'utilisateur a pris les trois recommandations (D-22).
+- **Réalisé** :
+  - Icône : `assets/icone/massicot.svg`, exportée par `scripts/icone.py` en `massicot.ico` (16 à
+    256 px) et en images de l'assistant ; intégrée à `massicot.exe` avec ses informations de
+    version (`build.rs`, crate `winresource`, compilation Windows seulement).
+  - Commande cachée `massicot accueil` (texte d'accueil de la console ; absente de l'aide et des
+    outils MCP) et son test.
+  - `installateur/massicot.iss` (Inno Setup, D-21) : installation par utilisateur dans
+    `%LOCALAPPDATA%\Programs\Massicot`, sans droits administrateur ; page « Prêt à installer » ou
+    « Prêt à mettre à jour » (version installée → nouvelle) ; raccourci PowerShell « Massicot » ;
+    PATH de l'utilisateur ; `massicot.exe` en cours d'exécution renommé (`.ancien-N`) au lieu
+    d'être fermé, nettoyé ensuite ; désinstallation qui rend le PATH tel qu'avant.
+  - CI (D-23) : `scripts/installateur.sh` (ISCC du runner), `scripts/version-precedente.sh`
+    (Release précédente : son installateur, sinon construit depuis son zip),
+    `scripts/essai-installateur.ps1` (essai bloquant), `scripts/captures-installateur.ps1`
+    (captures du vrai assistant, non bloquantes, en artefact) ; publication seulement sur `main` ;
+    Release avec le zip et l'exe, notes d'installation en français.
+  - README : installation par l'exe, mise à jour, désinstallation ; chemin MCP de l'installateur.
+  - Écarts trouvés sur les captures réelles et corrigés pour coller à l'aperçu : titre de la
+    fenêtre sans le numéro de version ; phrase de la page « Prêt » sans « ou sur Précédent » (il
+    n'y a pas de bouton Précédent) ; titre « Désinstallation de Massicot » sur les boîtes de
+    désinstallation.
+- **Décisions** : D-21 à D-23.
+- **Vérifications** :
+  - `cargo test --workspace` vert en session (50 tests, dont l'accueil de la console).
+  - CI sur la branche (runs 14 à 20, sans publication) : l'essai de l'installateur passe en entier
+    (run 15, puis suivants) : copie 0.1.13 décompressée à la main puis installateur par-dessus ;
+    raccourci (PowerShell, `massicot accueil`, icône), entrée HKCU (nom, version, éditeur
+    « Massicot », icône, désinstalleur, dossier), une seule entrée, rien dans HKLM, dossier une
+    fois dans le PATH, `massicot` trouvé par le PATH d'un nouveau terminal, `--version` juste ;
+    désinstallation : dossier, raccourci, entrée supprimés, PATH rendu à l'identique. Puis
+    installateur 0.1.13 (construit depuis le zip de la Release, qui n'a pas d'installateur), serveur
+    MCP lancé depuis le dossier, nouvel installateur par-dessus : version à jour, ancien exe mis de
+    côté (`massicot.exe.ancien-1`), le serveur tourne toujours et répond ; désinstallation avec un
+    serveur en marche : rien ne reste.
+  - Captures du vrai assistant prises sur le runner (Windows anglais, écran 1024 × 768) et
+    comparées aux aperçus : « Prêt à installer », « Prêt à mettre à jour », « Terminé », console,
+    confirmation et fin de désinstallation. Les boutons « Yes/No » de la confirmation suivent la
+    langue de Windows (« Oui/Non » sur le PC).
+- **Non vérifié sur le PC** : tout ce que liste R4 (SmartScreen, menu Démarrer, Applications
+  installées, Windows Terminal du PC, mise à jour avec Claude Code ouvert, désinstallation).
+  Les couleurs de l'accueil ne s'affichent que dans Windows Terminal (pas dans l'ancienne console).
+- **Problèmes et dette** :
+  - Exe et installateur non signés (SmartScreen).
+  - La configuration MCP du PC doit viser `%LOCALAPPDATA%\Programs\Massicot\massicot.exe` ; si
+    la 0.1.9 a été décompressée avec son sous-dossier `Massicot.0.1.9`, ce sous-dossier reste
+    après l'installation (l'installateur ne touche pas aux fichiers qu'il ne connaît pas).
+  - Anomalie du journal PC encore ouverte : `claude` hors du PATH, `claude mcp add` du README
+    inutilisable tel quel sur ce PC.
+- **Livraison** : la CI de ce push sur `main` publie la Release avec `Massicot.<version>.exe` et le
+  zip, après le même essai (numéro et vérification dans l'entrée de clôture suivante).
+- **Prochaine étape** : R4 sur le PC ; puis `docs/BRIEF-P3-P4.md` (P4.1, P3.1, P3.2).
+
+---
+
 ## 2026-11-16 · Premier lot réel : découpe par méthode LLM et par méthode déterministe
 
 - **Branche et commit** : `main` (docs seulement ; aucun code de Massicot touché).

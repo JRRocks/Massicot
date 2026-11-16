@@ -1,5 +1,7 @@
 # Every push on main: tests (Linux), then the Windows x64 build, a smoke test of the executable,
-# the Massicot.<version>.zip package and its GitHub Release. Nothing is published if a step fails.
+# the Massicot.<version>.zip package, the Massicot.<version>.exe installer and its test (install,
+# update over the previous release, uninstall), and the GitHub Release with both files. Nothing is
+# published if a step fails. Started by hand on another branch, everything runs but the publication.
 name: CI
 
 on:
@@ -41,6 +43,7 @@ jobs:
     name: Windows x64, paquet et publication
     needs: tests
     runs-on: windows-latest
+    timeout-minutes: 60
     permissions:
       contents: write
     env:
@@ -68,14 +71,48 @@ jobs:
           7z l "Massicot.$MASSICOT_VERSION.zip" | tail -n 3
       - name: Essai de l'exécutable du paquet
         run: bash scripts/essai-windows.sh "paquet/Massicot.$MASSICOT_VERSION/massicot.exe" target/release/massicot-essais.exe
+      - name: Installateur
+        run: bash scripts/installateur.sh "$MASSICOT_VERSION" "paquet/Massicot.$MASSICOT_VERSION" .
+      - name: Version précédente (pour l'essai de mise à jour)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/version-precedente.sh
+      - name: Essai de l'installateur (installation, mise à jour, désinstallation)
+        shell: pwsh
+        run: >-
+          ./scripts/essai-installateur.ps1 -Nouveau "Massicot.$env:MASSICOT_VERSION.exe" -Version $env:MASSICOT_VERSION
+          -Ancien "precedente/Massicot.$env:PRECEDENTE.exe" -AncienneVersion $env:PRECEDENTE
+          -CopieManuelle "precedente/zip/Massicot.$env:PRECEDENTE"
+      - name: Captures de l'assistant (à comparer avec les aperçus validés)
+        continue-on-error: true
+        timeout-minutes: 10
+        shell: powershell
+        run: >-
+          ./scripts/captures-installateur.ps1 -Nouveau "Massicot.$env:MASSICOT_VERSION.exe"
+          -Ancien "precedente/Massicot.$env:PRECEDENTE.exe" -Dossier captures
+      - name: Captures (artefact)
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: captures-installateur
+          path: captures/
+          retention-days: 14
+          if-no-files-found: ignore
       - name: Publication
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           {
             echo "Massicot $MASSICOT_VERSION pour Windows 64 bits (commit ${GITHUB_SHA::7})."
             echo
-            echo "Décompressez le zip, puis, dans un terminal ouvert dans le dossier : \`massicot --aide\`."
+            echo "**Installer** : téléchargez \`Massicot.$MASSICOT_VERSION.exe\` et lancez-le (sans droits administrateur ;"
+            echo "il remplace la version déjà installée, rien à désinstaller avant). L'installateur n'est pas signé :"
+            echo "Windows SmartScreen peut avertir une fois (« Informations complémentaires », puis « Exécuter quand même »)."
+            echo "Massicot est ensuite dans le menu Démarrer, et la commande \`massicot\` marche dans tout nouveau terminal."
+            echo
+            echo "**Sans installation** : décompressez le zip, puis, dans un terminal ouvert dans le dossier : \`massicot --aide\`."
           } > notes.md
-          gh release create "v$MASSICOT_VERSION" "Massicot.$MASSICOT_VERSION.zip" \
+          gh release create "v$MASSICOT_VERSION" "Massicot.$MASSICOT_VERSION.zip" "Massicot.$MASSICOT_VERSION.exe" \
             --target "$GITHUB_SHA" --title "Massicot $MASSICOT_VERSION" --notes-file notes.md

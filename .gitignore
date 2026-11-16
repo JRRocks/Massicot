@@ -9,3 +9,6 @@
 # Dossier de travail du script de paquet
 /paquet/
 /Massicot.*.zip
+/Massicot.*.exe
+# Version précédente téléchargée par la CI pour l'essai de mise à jour
+/precedente/
