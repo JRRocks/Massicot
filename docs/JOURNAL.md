@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-11-16 · Clôture P1.3 : installateur publié (Release v0.1.21)
+
+- **Branche et commit** : `main` (docs seulement).
+- **Réalisé** : la CI du push P1.3 (run 21) a publié la Release `v0.1.21` avec
+  `Massicot.0.1.21.exe` (18,6 Mo) et `Massicot.0.1.21.zip`.
+- **Vérifications** :
+  - Run 21 vert : tests Linux ; essai de l'exe du paquet ; essai de l'installateur (65 vérifications :
+    copie 0.1.18 décompressée à la main puis 0.1.21 par-dessus ; installateur 0.1.18 construit
+    depuis son zip puis 0.1.21 par-dessus, serveur MCP actif ; ressources de `massicot.exe`, icône
+    comprise ; désinstallations, rien ne reste) ; six captures de l'assistant prises (artefact).
+  - Exe de la Release téléchargé en session : exécutable Windows, Inno Setup, version 0.1.21.
+  - Ce push publie à son tour une Release : sa CI essaie pour la première fois la mise à jour d'un
+    installateur publié (0.1.21) par le suivant.
+- **Non vérifié sur le PC** : R4.
+- **Prochaine étape** : R4 sur le PC ; `docs/BRIEF-P3-P4.md` (P4.1, P3.1, P3.2).
+
+---
+
 ## 2026-11-16 · Session cloud P1.3 : installateur Windows
 
 - **Branche et commit** : mise au point sur `claude/modest-edison-y0moby` (CI lancée à la main,
