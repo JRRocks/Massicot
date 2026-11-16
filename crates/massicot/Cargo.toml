@@ -1,0 +1,19 @@
+[package]
+name = "massicot"
+description = "Boîte à outils PDF : fusion, découpe, extraction, rotation, mélange, OCR et découpe par en-tête"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "massicot"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+clap = { version = "4.5", default-features = false, features = ["std", "derive", "help", "usage", "error-context", "suggestions"] }

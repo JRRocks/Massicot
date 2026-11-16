@@ -14,7 +14,7 @@ procès-verbal par fichier), pilotable par Claude (CLI, MCP) et par l'utilisateu
 
 | N° | Tâche | Critère que l'utilisateur peut observer | Statut |
 |---|---|---|---|
-| P1.1 | Squelette Rust + CI : tests, puis compilation Windows, puis publication | Chaque push sur `main` publie `Massicot.<version>.zip` dans les Releases ; `massicot --version` affiche ce numéro | ⬜ |
+| P1.1 | Squelette Rust + CI : tests, puis compilation Windows, puis publication | Chaque push sur `main` publie `Massicot.<version>.zip` dans les Releases ; `massicot --version` affiche ce numéro | 🔄 |
 | P1.2 | Reprise des moteurs de PdfCraft (copie, licences, `ATTRIBUTION.md`, révision source) | La CI reste verte ; `massicot info <fichier.pdf>` décrit un PDF | ⬜ |
 | P2.1 | Fonctions PDFsam Basic en ligne de commande : fusion, extraction, découpe (toutes les N pages, avant des pages, par signets d'un niveau choisi, par taille), rotation (dont paires/impaires), suppression, déplacement, inversion | Chaque commande produit le PDF attendu sur les PDF d'essai générés | ⬜ |
 | P2.2 | Mélange alterné (recto et verso scannés à part, second fichier inversé en option) | Deux PDF de 3 pages donnent un PDF 1-A,2-B,3-C… | ⬜ |

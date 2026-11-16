@@ -4,3 +4,5 @@
 *.local
 # Vrais PDF de l'utilisateur (PV, scans) : jamais dans le dépôt public
 /essais-prives/
+# Modèles OCR téléchargés par scripts/modeles-ocr.sh (jamais dans le dépôt)
+/modeles/

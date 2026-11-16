@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-11-16 · Session cloud P1.1 à P2.5 : squelette, moteurs, commandes PDF, découpe par en-tête, MCP
+
+- **Branche et commit** : `main` (push direct, D-04 et brief).
+- **Objectif** : tâches P1.1 à P2.5 du plan, d'après `docs/BRIEF-P1-P2.md`.
+- **Réalisé** :
+  - P1.1 : workspace Cargo, exécutable `massicot` (aide et erreurs en français, `--version`),
+    CI GitHub Actions (tests Linux, compilation Windows MSVC, essai de l'exécutable, zip
+    `Massicot.<version>.zip` avec les modèles OCR, Release `v<version>`), version `0.1.<n° de run>`.
+- **Décisions** : D-12, D-13.
+- **Vérifications** : `cargo test --workspace` vert en session (3 tests) ; contrôle « dépôt public »
+  sans signalement.
+- **Non vérifié sur le PC** : tout (aucun essai sur Windows réel).
+- **Problèmes et dette** : l'essai de découpe sur le runner Windows arrive avec la commande de
+  découpe (P2.1).
+- **Prochaine étape** : P1.2.
+
+---
+
 ## 2026-11-16 · Lancement de Massicot, après l'analyse de PdfCraft
 
 - **Branche et commit** : `main`, commit initial (mémoire du projet, licences, README).

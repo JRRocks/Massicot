@@ -1,0 +1,81 @@
+# Every push on main: tests (Linux), then the Windows x64 build, a smoke test of the executable,
+# the Massicot.<version>.zip package and its GitHub Release. Nothing is published if a step fails.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+
+jobs:
+  tests:
+    name: Tests (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rust
+        run: rustup toolchain install && cargo --version
+      - uses: Swatinem/rust-cache@v2
+      - name: Modèles OCR (cache)
+        uses: actions/cache@v6
+        with:
+          path: modeles
+          key: modeles-ocr-${{ hashFiles('scripts/modeles-ocr.sh') }}
+      - name: Modèles OCR
+        run: bash scripts/modeles-ocr.sh modeles
+      - name: Tests
+        run: cargo test --workspace --locked
+
+  windows:
+    name: Windows x64, paquet et publication
+    needs: tests
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      MASSICOT_VERSION: 0.1.${{ github.run_number }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rust
+        run: rustup toolchain install && cargo --version
+      - uses: Swatinem/rust-cache@v2
+      - name: Modèles OCR (cache)
+        uses: actions/cache@v6
+        with:
+          path: modeles
+          key: modeles-ocr-${{ hashFiles('scripts/modeles-ocr.sh') }}
+      - name: Modèles OCR
+        run: bash scripts/modeles-ocr.sh modeles
+      - name: Compilation (MSVC, release)
+        run: cargo build --release --locked -p massicot
+      - name: Essai de l'exécutable
+        run: bash scripts/essai-windows.sh target/release/massicot.exe
+      - name: Paquet
+        run: |
+          dir="Massicot.$MASSICOT_VERSION"
+          mkdir -p "paquet/$dir"
+          cp target/release/massicot.exe LICENSE-MIT LICENSE-APACHE NOTICE ATTRIBUTION.md "paquet/$dir/"
+          cp -r modeles "paquet/$dir/modeles"
+          (cd paquet && 7z a -tzip -bd "../$dir.zip" "$dir" > /dev/null)
+          7z l "$dir.zip" | tail -n 3
+      - name: Publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Massicot $MASSICOT_VERSION pour Windows 64 bits (commit ${GITHUB_SHA::7})."
+            echo
+            echo "Décompressez le zip, puis, dans un terminal ouvert dans le dossier : \`massicot --aide\`."
+          } > notes.md
+          gh release create "v$MASSICOT_VERSION" "Massicot.$MASSICOT_VERSION.zip" \
+            --target "$GITHUB_SHA" --title "Massicot $MASSICOT_VERSION" --notes-file notes.md
