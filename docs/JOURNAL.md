@@ -25,6 +25,13 @@
     hors interface ; ses outils sont ceux de PdfCraft, pas ceux de Massicot. Non reprise (D-14) :
     l'ensemble minimal copié (sans elle) fait environ 12 % du code de PdfCraft, donc pas d'arrêt
     au titre de D-10 ; le serveur MCP sera écrit pour Massicot (P2.5).
+  - P1.2 vérifiée : CI verte (run 2, compilation Windows en 4 min, `massicot.exe infos` essayé
+    sur le runner sur un PDF généré), Release `v0.1.2`.
+  - P2.1 : commandes `fusionner` (un signet par fichier, ou `--sans-signets`), `extraire` (ordre
+    donné), `decouper` (`--toutes N`, `--avant`, `--signets NIVEAU`, `--taille`), `tourner`
+    (`--paires`, `--impaires`, `--pages`), `supprimer`, `deplacer` (`--vers debut|fin|N`),
+    `inverser` ; jamais d'écrasement sans `--ecraser` ; noms de fichiers sûrs pour Windows ;
+    essai de découpe ajouté sur le runner Windows.
 - **Décisions** : D-12, D-13, D-14, D-15.
 - **Vérifications** : `cargo test --workspace` vert en session ; contrôle « dépôt public »
   sans signalement.

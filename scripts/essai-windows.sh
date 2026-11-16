@@ -12,4 +12,9 @@ test "$out" = "massicot ${MASSICOT_VERSION:?}"
 "$essais" "$work" > /dev/null
 "$exe" infos "$work/essai.pdf"
 "$exe" infos --json "$work/essai.pdf" | tr -d '\r' | grep -q '"pages": 5'
+
+# Découpe d'essai : 5 pages, un fichier toutes les 2 pages.
+"$exe" decouper "$work/essai.pdf" --toutes 2 --dossier "$work/parties"
+test "$(ls "$work/parties" | wc -l)" -eq 3
+"$exe" infos --json "$work/parties/essai-03.pdf" | tr -d '\r' | grep -q '"pages": 1'
 echo "Essai réussi."

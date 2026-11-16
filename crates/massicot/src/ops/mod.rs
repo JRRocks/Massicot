@@ -1,7 +1,11 @@
 //! The operations, shared by the command line and the MCP server. Each returns a serialisable
 //! result (JSON for the MCP server and `--json`) that also renders as French text.
 
+pub mod decoupe;
+pub mod fusion;
 pub mod infos;
+pub mod pages;
+pub mod sortie;
 
 /// A size in bytes, written the French way ("1,2 Mo").
 pub fn taille_lisible(octets: u64) -> String {

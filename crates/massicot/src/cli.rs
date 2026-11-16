@@ -3,14 +3,10 @@
 use std::ffi::OsString;
 use std::process::ExitCode;
 
-use std::path::PathBuf;
-
 use clap::error::{ContextKind, ErrorKind};
-use clap::{ArgAction, Args, Parser, Subcommand};
-use serde::Serialize;
+use clap::{ArgAction, Parser};
 
-use crate::erreur::{Erreur, Resultat};
-use crate::ops;
+use crate::commandes::{Commande, executer};
 
 /// Help layout of the main command (clap's own headings are English).
 const ROOT_TEMPLATE: &str = "\
@@ -20,18 +16,6 @@ Utilisation : {usage}
 
 Commandes :
 {subcommands}
-
-Options :
-{options}{after-help}";
-
-/// Help layout of a command with positional arguments.
-const CMD_TEMPLATE: &str = "\
-{about}
-
-Utilisation : {usage}
-
-Arguments :
-{positionals}
 
 Options :
 {options}{after-help}";
@@ -65,33 +49,6 @@ pub struct Cli {
 
     #[command(subcommand)]
     commande: Option<Commande>,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum Commande {
-    /// Décrit un PDF : pages, formats, métadonnées, signets, protection.
-    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot infos <FICHIER> [--json]")]
-    Infos(InfosArgs),
-}
-
-#[derive(Debug, Args)]
-pub struct InfosArgs {
-    /// Le PDF à décrire.
-    #[arg(value_name = "FICHIER", value_hint = clap::ValueHint::FilePath)]
-    pub fichier: PathBuf,
-}
-
-/// Runs a parsed command; returns the JSON value and the French text of its result.
-pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
-    match commande {
-        Commande::Infos(a) => sortie(ops::infos::infos(&a.fichier)?, |r| r.texte()),
-    }
-}
-
-fn sortie<T: Serialize>(resultat: T, texte: impl Fn(&T) -> String) -> Resultat<(serde_json::Value, String)> {
-    let t = texte(&resultat);
-    let v = serde_json::to_value(&resultat).map_err(|e| Erreur::moteur("la mise en forme du résultat", e))?;
-    Ok((v, t))
 }
 
 /// Entry point of the `massicot` executable.
