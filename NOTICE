@@ -1,0 +1,10 @@
+Massicot
+Copyright (c) 2026 the Massicot contributors.
+Licensed under the MIT License or the Apache License, Version 2.0, at your option
+(LICENSE-MIT, LICENSE-APACHE).
+
+Massicot reuses PDF engines from PdfCraft (https://github.com/storytold/pdfcraft),
+Copyright (c) 2026 ArtCraft Team and the PdfCraft contributors, licensed under the MIT License
+or the Apache License, Version 2.0. The source revision of every reused crate, and the
+third-party material it bundles, are listed in ATTRIBUTION.md once the crates are imported.
+The ArtCraft and PdfCraft names, wordmarks and logos are not used by Massicot.

@@ -1,0 +1,6 @@
+/target/
+**/*.rs.bk
+.env
+*.local
+# Vrais PDF de l'utilisateur (PV, scans) : jamais dans le dépôt public
+/essais-prives/
