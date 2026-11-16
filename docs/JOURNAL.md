@@ -29,9 +29,15 @@
     Découper, « ↔ » pour Mélanger, « ↗ » pour Extraire, « ↑↓ » pour Inverser), sans les émojis
     ✂ et 📂 des boutons (absents de ces polices) ; « Voir le rapport » sur sa propre ligne.
 - **Décisions** : D-27, D-28.
-- **Vérifications** : `cargo test --workspace` vert (53 tests, dont 3 tests d'écran egui_kittest :
-  écran principal, quatre étapes de la découpe, extraction de pages sélectionnées qui écrit un PDF
-  de 3 pages).
+- **Vérifications** :
+  - `cargo test --workspace` vert (53 tests, dont 3 tests d'écran egui_kittest : écran principal,
+    quatre étapes de la découpe, extraction de pages sélectionnées qui écrit un PDF de 3 pages).
+  - CI sur la branche : run 25, une image différente sur la CI (la page blanche du lot d'essai y
+    était lue par Tesseract : lot d'essai rendu indépendant de l'OCR) ; run 26, plantage du Vulkan
+    logiciel avec trois tests d'écran en même temps (tests mis l'un après l'autre) ; run 27 vert :
+    images identiques à celles de la session, essai de l'installateur (raccourci vers
+    `massicot-fenetre.exe`), et la vraie fenêtre ouverte sous Windows par le lanceur, depuis le
+    dossier installé, sur un PDF inventé : vignettes, icône, aucune console.
 - **Non vérifié sur le PC** : R5 (la fenêtre sous Windows réel, l'absence de console, les
   dialogues de fichiers, l'Explorateur).
 - **Prochaine étape** : CI et Release ; puis P4.2 (lot 1) après le retour de l'utilisateur.
