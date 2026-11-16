@@ -1,0 +1,25 @@
+[package]
+name = "pdfcraft-organize"
+description = "Page and document-structure edits: rotate, delete, move, insert pages; document info"
+version = "0.21.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[dependencies]
+pdfcraft-content = {path = "../content", version = "0.21.0"}
+pdfcraft-cos = {path = "../cos", version = "0.21.0"}
+thiserror = {version = "2"}
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"

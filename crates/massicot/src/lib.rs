@@ -3,6 +3,9 @@
 //! User-facing messages are French; code and comments are English.
 
 pub mod cli;
+pub mod erreur;
+pub mod ops;
+pub mod pdf;
 
 /// The delivery version (`0.1.<CI run number>`, or `<crate version>-dev` for a local build).
 pub const VERSION: &str = env!("MASSICOT_VERSION");

@@ -1,0 +1,20 @@
+[package]
+name = "massicot-essais"
+description = "Générateur de PDF d'essai inventés (lots de procès-verbaux texte et scannés) pour les tests de Massicot"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[[bin]]
+name = "massicot-essais"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+pdfcraft-cos = { path = "../cos" }
+pdfcraft-organize = { path = "../organize" }
+pdfcraft-fonts = { path = "../fonts" }

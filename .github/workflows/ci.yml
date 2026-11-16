@@ -57,17 +57,13 @@ jobs:
       - name: Modèles OCR
         run: bash scripts/modeles-ocr.sh modeles
       - name: Compilation (MSVC, release)
-        run: cargo build --release --locked -p massicot
+        run: cargo build --release --locked -p massicot -p massicot-essais
       - name: Essai de l'exécutable
-        run: bash scripts/essai-windows.sh target/release/massicot.exe
+        run: bash scripts/essai-windows.sh target/release/massicot.exe target/release/massicot-essais.exe
       - name: Paquet
         run: |
-          dir="Massicot.$MASSICOT_VERSION"
-          mkdir -p "paquet/$dir"
-          cp target/release/massicot.exe LICENSE-MIT LICENSE-APACHE NOTICE ATTRIBUTION.md "paquet/$dir/"
-          cp -r modeles "paquet/$dir/modeles"
-          (cd paquet && 7z a -tzip -bd "../$dir.zip" "$dir" > /dev/null)
-          7z l "$dir.zip" | tail -n 3
+          bash scripts/paquet.sh "$MASSICOT_VERSION" target/release/massicot.exe modeles
+          7z l "Massicot.$MASSICOT_VERSION.zip" | tail -n 3
       - name: Publication
         env:
           GH_TOKEN: ${{ github.token }}

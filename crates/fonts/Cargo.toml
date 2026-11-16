@@ -1,0 +1,28 @@
+[package]
+name = "pdfcraft-fonts"
+description = "Font metrics and text encoding helpers for generated appearances (standard fonts, WinAnsi)"
+version = "0.21.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[dependencies]
+pdfcraft-cos = {path = "../cos", version = "0.21.0"}
+# Glyph outlines of the bundled script font (typed signatures); already in the tree via egui.
+skrifa = "0.44"
+# Arabic shaping for text written into PDFs; already in the tree via egui, on the same read-fonts.
+harfrust = "0.12"
+unicode-bidi = "0.3"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"

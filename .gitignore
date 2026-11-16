@@ -6,3 +6,6 @@
 /essais-prives/
 # Modèles OCR téléchargés par scripts/modeles-ocr.sh (jamais dans le dépôt)
 /modeles/
+# Dossier de travail du script de paquet
+/paquet/
+/Massicot.*.zip

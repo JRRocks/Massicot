@@ -1,0 +1,25 @@
+[package]
+name = "pdfcraft-content"
+description = "Content streams (ISO 32000-2 §7.8, §8–9): operators with source spans, inline images, serializer, matrices"
+version = "0.21.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[dependencies]
+# The parser and serializer live in craft-pdf's `content` feature. The workspace patch points its
+# hayro-syntax at vendor/hayro-syntax, so inline images end where the renderer ends them.
+craft-pdf = {version = "0.1.0", features = ["content", "cos", "crypt", "filters"], path = "../../vendor/craft-libs/pdf"}
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"

@@ -1,0 +1,35 @@
+[package]
+name = "pdfcraft-ocr"
+description = "Scan & OCR: recognise text in page images (ocrs) and write it as an invisible, searchable text layer"
+version = "0.21.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.95"
+repository = "https://github.com/storytold/pdfcraft"
+publish = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[dependencies]
+pdfcraft-fonts = {path = "../fonts", version = "0.21.0"}
+ocrs = {version = "0.13.1", default-features = false, features = ["rten"]}
+rten = {version = "0.26.0", default-features = false, features = ["onnx_format", "rten_format"]}
+rten-imageproc = "0.26.0"
+sha2 = "0.11"
+serde_json = {version = "1"}
+thiserror = {version = "2"}
+png = "0.18"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# The page image is handed to the external tesseract process as a PNG.
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"

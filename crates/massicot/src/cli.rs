@@ -3,8 +3,14 @@
 use std::ffi::OsString;
 use std::process::ExitCode;
 
+use std::path::PathBuf;
+
 use clap::error::{ContextKind, ErrorKind};
-use clap::{ArgAction, Parser, Subcommand};
+use clap::{ArgAction, Args, Parser, Subcommand};
+use serde::Serialize;
+
+use crate::erreur::{Erreur, Resultat};
+use crate::ops;
 
 /// Help layout of the main command (clap's own headings are English).
 const ROOT_TEMPLATE: &str = "\
@@ -14,6 +20,18 @@ Utilisation : {usage}
 
 Commandes :
 {subcommands}
+
+Options :
+{options}{after-help}";
+
+/// Help layout of a command with positional arguments.
+const CMD_TEMPLATE: &str = "\
+{about}
+
+Utilisation : {usage}
+
+Arguments :
+{positionals}
 
 Options :
 {options}{after-help}";
@@ -41,12 +59,40 @@ pub struct Cli {
     #[arg(short = 'V', long = "version", action = ArgAction::Version)]
     version: Option<bool>,
 
+    /// Résultat en JSON (pour un programme ou un agent) au lieu du texte.
+    #[arg(long, global = true)]
+    json: bool,
+
     #[command(subcommand)]
     commande: Option<Commande>,
 }
 
 #[derive(Debug, Subcommand)]
-pub enum Commande {}
+pub enum Commande {
+    /// Décrit un PDF : pages, formats, métadonnées, signets, protection.
+    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot infos <FICHIER> [--json]")]
+    Infos(InfosArgs),
+}
+
+#[derive(Debug, Args)]
+pub struct InfosArgs {
+    /// Le PDF à décrire.
+    #[arg(value_name = "FICHIER", value_hint = clap::ValueHint::FilePath)]
+    pub fichier: PathBuf,
+}
+
+/// Runs a parsed command; returns the JSON value and the French text of its result.
+pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
+    match commande {
+        Commande::Infos(a) => sortie(ops::infos::infos(&a.fichier)?, |r| r.texte()),
+    }
+}
+
+fn sortie<T: Serialize>(resultat: T, texte: impl Fn(&T) -> String) -> Resultat<(serde_json::Value, String)> {
+    let t = texte(&resultat);
+    let v = serde_json::to_value(&resultat).map_err(|e| Erreur::moteur("la mise en forme du résultat", e))?;
+    Ok((v, t))
+}
 
 /// Entry point of the `massicot` executable.
 pub fn main() -> ExitCode {
@@ -63,12 +109,27 @@ where
         Ok(cli) => cli,
         Err(e) => return report_parse_error(&e),
     };
-    match cli.commande {
-        None => {
-            use clap::CommandFactory;
-            let mut cmd = Cli::command();
-            print!("{}", cmd.render_help());
+    let Some(commande) = cli.commande else {
+        use clap::CommandFactory;
+        let mut cmd = Cli::command();
+        print!("{}", cmd.render_help());
+        return ExitCode::SUCCESS;
+    };
+    match executer(&commande) {
+        Ok((json, texte)) => {
+            if cli.json {
+                println!("{}", serde_json::to_string_pretty(&json).unwrap_or_default());
+            } else {
+                print!("{texte}");
+            }
             ExitCode::SUCCESS
+        }
+        Err(e) => {
+            if cli.json {
+                println!("{}", serde_json::json!({ "erreur": e.message() }));
+            }
+            eprintln!("massicot : {e}");
+            ExitCode::from(1)
         }
     }
 }

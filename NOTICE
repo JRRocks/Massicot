@@ -3,8 +3,15 @@ Copyright (c) 2026 the Massicot contributors.
 Licensed under the MIT License or the Apache License, Version 2.0, at your option
 (LICENSE-MIT, LICENSE-APACHE).
 
-Massicot reuses PDF engines from PdfCraft (https://github.com/storytold/pdfcraft),
-Copyright (c) 2026 ArtCraft Team and the PdfCraft contributors, licensed under the MIT License
-or the Apache License, Version 2.0. The source revision of every reused crate, and the
-third-party material it bundles, are listed in ATTRIBUTION.md once the crates are imported.
+Massicot reuses PDF engines from PdfCraft (https://github.com/storytold/pdfcraft, revision
+412e6963b56c62d6cc6f29cb4cb10d521dc825a4), Copyright (c) 2026 ArtCraft Team and the PdfCraft
+contributors, and two crates from craft-libs (https://github.com/storytold/craft-libs, revision
+8e03cd016d42032b867fef6bad86bc69bf2c1920), Copyright (c) 2026 ArtCraft Team and the craft-libs
+contributors, both licensed under the MIT License or the Apache License, Version 2.0.
 The ArtCraft and PdfCraft names, wordmarks and logos are not used by Massicot.
+
+It also includes third-party crates patched by PdfCraft (hayro, lopdf, vello; Apache-2.0 OR MIT,
+or MIT), fonts under the SIL Open Font License 1.1 (Inter, JetBrains Mono, Dancing Script),
+the Foxit standard-14 substitute fonts and Adobe CMap resources (BSD-3-Clause), and ships the ocrs
+OCR models (CC-BY-SA-4.0) beside the executable. ATTRIBUTION.md lists every item with its
+source, revision and licence; the licence texts are in the licences/ folder of the Windows package.

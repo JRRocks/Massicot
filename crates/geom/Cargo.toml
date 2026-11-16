@@ -1,0 +1,22 @@
+[package]
+name = "pdfcraft-geom"
+description = "Geometry primitives for PdfCraft (points, rects, page transforms)"
+version = "0.21.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"

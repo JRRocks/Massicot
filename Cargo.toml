@@ -1,6 +1,12 @@
 [workspace]
 resolver = "3"
-members = ["crates/massicot"]
+members = ["crates/massicot", "crates/essais"]
+# Engines copied from PdfCraft and its dependencies (scripts/importer-moteurs.py, ATTRIBUTION.md):
+# not members, so `cargo test --workspace` runs Massicot's tests only.
+exclude = [
+    "crates/cos", "crates/content", "crates/organize", "crates/fonts", "crates/geom",
+    "crates/render", "crates/ocr", "vendor",
+]
 
 [workspace.package]
 version = "0.1.0"
@@ -21,3 +27,15 @@ strip = "debuginfo"
 [profile.dev.package."*"]
 opt-level = 2
 debug = false
+
+# PdfCraft's patched copies of these crates.io crates (vendor/, see ATTRIBUTION.md).
+[patch.crates-io]
+hayro-interpret = { path = "vendor/hayro-interpret" }
+hayro = { path = "vendor/hayro" }
+hayro-syntax = { path = "vendor/hayro-syntax" }
+hayro-cmap = { path = "vendor/hayro-cmap" }
+hayro-postscript = { path = "vendor/hayro-postscript" }
+hayro-jbig2 = { path = "vendor/hayro-jbig2" }
+lopdf = { path = "vendor/lopdf" }
+vello_common = { path = "vendor/vello_common" }
+vello_cpu = { path = "vendor/vello_cpu" }

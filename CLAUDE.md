@@ -18,12 +18,16 @@ Ce fichier ne contient que ce qui est propre à ce projet. Il reste court : le d
 
 ## Commandes
 
-À compléter dès que le squelette compile (tâche P1.1) :
-
 ```bash
-cargo test --workspace            # vérifier
-cargo build --release -p massicot  # compiler l'exécutable
+bash scripts/modeles-ocr.sh modeles  # modèles OCR (une fois ; dossier ignoré par git)
+cargo test --workspace               # vérifier (ne teste que Massicot, pas les crates copiées)
+cargo build --release -p massicot    # compiler l'exécutable
+cargo run -p massicot-essais -- DIR  # PDF d'essai inventés
 ```
+
+Moteurs copiés de PdfCraft et craft-libs (`crates/` sauf `massicot` et `essais`, `vendor/`) : ne
+pas les modifier à la main ; les remettre à jour par `scripts/importer-moteurs.py` (voir
+`ATTRIBUTION.md`, révisions sources).
 
 ## Livraison
 

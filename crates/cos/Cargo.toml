@@ -1,0 +1,23 @@
+[package]
+name = "pdfcraft-cos"
+description = "PDF object layer: lazy tolerant parsing, copy-on-write edits, incremental and full saving"
+version = "0.21.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[dependencies]
+craft-pdf = {version = "0.1.0", features = ["cos", "crypt", "filters"], path = "../../vendor/craft-libs/pdf"}
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"

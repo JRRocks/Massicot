@@ -13,8 +13,20 @@
   - P1.1 : workspace Cargo, exécutable `massicot` (aide et erreurs en français, `--version`),
     CI GitHub Actions (tests Linux, compilation Windows MSVC, essai de l'exécutable, zip
     `Massicot.<version>.zip` avec les modèles OCR, Release `v<version>`), version `0.1.<n° de run>`.
-- **Décisions** : D-12, D-13.
-- **Vérifications** : `cargo test --workspace` vert en session (3 tests) ; contrôle « dépôt public »
+  - P1.1 vérifiée : CI verte (run 1), Release `v0.1.1` publiée ; zip téléchargé et ouvert en
+    session (exe, modèles, licences).
+  - P1.2 : moteurs repris de PdfCraft `412e696` (7 crates) et de craft-libs `8e03cd0` (2 crates),
+    plus 9 crates tierces corrigées par PdfCraft (`vendor/`), par `scripts/importer-moteurs.py` ;
+    versions des dépendances alignées sur le `Cargo.lock` de PdfCraft ; `ATTRIBUTION.md`, `NOTICE`,
+    dossier `licences/` du zip, liste des crates compilées (`scripts/dependances.py`) ;
+    commande `massicot infos` ; générateur de PDF d'essai inventés (`crates/essais`).
+  - Évaluation de `crates/automation` (outils JSON + serveur MCP de PdfCraft) : elle exige
+    `pdfcraft-engine`, donc 27 crates de PdfCraft et 18 de craft-libs, soit l'essentiel de PdfCraft
+    hors interface ; ses outils sont ceux de PdfCraft, pas ceux de Massicot. Non reprise (D-14) :
+    l'ensemble minimal copié (sans elle) fait environ 12 % du code de PdfCraft, donc pas d'arrêt
+    au titre de D-10 ; le serveur MCP sera écrit pour Massicot (P2.5).
+- **Décisions** : D-12, D-13, D-14, D-15.
+- **Vérifications** : `cargo test --workspace` vert en session ; contrôle « dépôt public »
   sans signalement.
 - **Non vérifié sur le PC** : tout (aucun essai sur Windows réel).
 - **Problèmes et dette** : l'essai de découpe sur le runner Windows arrive avec la commande de
