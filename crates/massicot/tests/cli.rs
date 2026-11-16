@@ -44,6 +44,7 @@ fn welcome_of_the_start_menu_console() {
     assert!(text.starts_with(&format!("Massicot {} · boîte à outils PDF\n", massicot::VERSION)), "{text}");
     assert!(text.contains("massicot decouper-regex lot.pdf --regex \"PROCÈS-VERBAL N° (?<num>\\d+)\" --zone-haute 30\n"), "{text}");
     assert!(text.contains("décrit un PDF") && text.contains("faites glisser un PDF"), "{text}");
+    assert!(text.ends_with("procès-verbal ».\n\n"), "a blank line before the prompt: {text}");
     assert!(!text.contains('\x1b'), "no colours when the output is not a console: {text}");
     // Hidden from the help: it is the shortcut's, not a command to learn.
     let aide = String::from_utf8_lossy(&massicot(&["--aide"]).stdout).to_string();

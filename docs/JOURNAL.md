@@ -19,6 +19,9 @@
   - Liste en image (apport, effort, moteur) et trois questions ; réponses : lots 1 et 4, fenêtre
     d'abord, fenêtre centrée sur les outils de PDFsam Basic avec aperçu (D-25, D-26). Plan : P4.1
     fait, P4.2 et P4.3 ajoutées, critère de P3.2 revu.
+  - Écart vu sur la capture réelle de la console du menu Démarrer (run 23) et corrigé : la ligne
+    vide avant l'invite, présente sur l'aperçu validé, manquait.
+- **Vérifications** : `cargo test -p massicot --test cli` vert (accueil terminé par une ligne vide).
 - **Prochaine étape** : P3.1, maquettes de la fenêtre (plusieurs variantes), selon D-26.
 
 ---

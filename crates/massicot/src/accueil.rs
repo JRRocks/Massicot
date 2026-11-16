@@ -70,5 +70,7 @@ fn rendu(s: &Styles) -> String {
     ));
     t.push_str("Astuce : faites glisser un PDF dans cette fenêtre pour écrire son chemin.\n");
     t.push_str("Avec Claude Code, demandez simplement : « découpe lot.pdf, un fichier par procès-verbal ».\n");
+    // A blank line before the console prompt, as on the validated preview.
+    t.push('\n');
     t
 }
