@@ -35,7 +35,20 @@
   - P2.1 vérifiée : CI verte (run 3, découpe d'essai réussie sur le runner Windows), Release `v0.1.3`.
   - P2.2 : commande `melanger` (recto et verso scannés à part ; `--verso-inverse` ; pas réglables
     `--pas-recto`, `--pas-verso` ; le reste du plus long fichier suit).
-- **Décisions** : D-12, D-13, D-14, D-15.
+  - P2.2 vérifiée : CI verte (run 4), Release `v0.1.4`.
+  - P2.3 : commandes `texte` (couche texte, sinon OCR ; `--ocr auto|toujours|jamais`) et `ocr`
+    (texte invisible ajouté aux pages sans texte, comme le fait PdfCraft : Helvetica étirée sur
+    chaque mot, bloc marqué `/OCR`). Moteurs : intégré (`ocrs`, modèles à côté de l'exe) ou
+    Tesseract en français s'il est installé (`--moteur auto|integre|tesseract`).
+  - Mesure de l'OCR intégré sur des en-têtes scannés inventés (`examples/mesure_ocr.rs`) : il lit
+    les lettres accentuées et « ° » comme « ? » (« PROC?S-VERBAL N? 12 », « D?lib?ration n? 4 »),
+    mais résiste au bruit. Tesseract 5.3 `fra` (installé dans la session) lit tout juste à
+    200 dpi propre (« PROCÈS-VERBAL N° 12 »), mais perd les en-têtes sur un scan très bruité et
+    penché. D'où Tesseract en moteur optionnel (D-16) et la lecture tolérante de P2.4.
+  - CI : Tesseract `fra` installé sur le runner Linux, son test devient obligatoire
+    (`MASSICOT_EXIGER_TESSERACT`) ; sur Windows, l'essai se fait sur l'exécutable du paquet
+    (modèles trouvés à côté de lui) et comprend un OCR d'essai.
+- **Décisions** : D-12, D-13, D-14, D-15, D-16.
 - **Vérifications** : `cargo test --workspace` vert en session ; contrôle « dépôt public »
   sans signalement.
 - **Non vérifié sur le PC** : tout (aucun essai sur Windows réel).

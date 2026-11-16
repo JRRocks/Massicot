@@ -17,4 +17,9 @@ test "$out" = "massicot ${MASSICOT_VERSION:?}"
 "$exe" decouper "$work/essai.pdf" --toutes 2 --dossier "$work/parties"
 test "$(ls "$work/parties" | wc -l)" -eq 3
 "$exe" infos --json "$work/parties/essai-03.pdf" | tr -d '\r' | grep -q '"pages": 1'
+
+# OCR d'essai avec le moteur intégré : les modèles doivent être trouvés à côté de l'exécutable.
+"$exe" texte --ocr jamais --pages 1 "$work/essai-scan.pdf" | tr -d '\r' | grep -q "aucun texte"
+"$exe" ocr --moteur integre "$work/essai-scan.pdf" --sortie "$work/cherchable.pdf"
+"$exe" texte --ocr jamais --pages 1 "$work/cherchable.pdf" | tr -d '\r' | grep -q "VERBAL"
 echo "Essai réussi."

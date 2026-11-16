@@ -5,6 +5,7 @@
 pub mod cli;
 pub mod commandes;
 pub mod erreur;
+pub mod lecture;
 pub mod ops;
 pub mod pdf;
 

@@ -979,6 +979,7 @@ dependencies = [
  "pdfcraft-cos",
  "pdfcraft-fonts",
  "pdfcraft-organize",
+ "pdfcraft-render",
 ]
 
 [[package]]

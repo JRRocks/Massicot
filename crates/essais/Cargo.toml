@@ -18,3 +18,4 @@ workspace = true
 pdfcraft-cos = { path = "../cos" }
 pdfcraft-organize = { path = "../organize" }
 pdfcraft-fonts = { path = "../fonts" }
+pdfcraft-render = { path = "../render" }

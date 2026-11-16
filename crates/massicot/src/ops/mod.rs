@@ -5,6 +5,7 @@ pub mod decoupe;
 pub mod fusion;
 pub mod infos;
 pub mod melange;
+pub mod ocr;
 pub mod pages;
 pub mod sortie;
 

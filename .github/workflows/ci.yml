@@ -30,7 +30,11 @@ jobs:
           key: modeles-ocr-${{ hashFiles('scripts/modeles-ocr.sh') }}
       - name: Modèles OCR
         run: bash scripts/modeles-ocr.sh modeles
+      - name: Tesseract (français), pour essayer le moteur optionnel
+        run: sudo apt-get install -y -q tesseract-ocr tesseract-ocr-fra > /dev/null && tesseract --list-langs
       - name: Tests
+        env:
+          MASSICOT_EXIGER_TESSERACT: "1"
         run: cargo test --workspace --locked
 
   windows:
@@ -58,12 +62,12 @@ jobs:
         run: bash scripts/modeles-ocr.sh modeles
       - name: Compilation (MSVC, release)
         run: cargo build --release --locked -p massicot -p massicot-essais
-      - name: Essai de l'exécutable
-        run: bash scripts/essai-windows.sh target/release/massicot.exe target/release/massicot-essais.exe
       - name: Paquet
         run: |
           bash scripts/paquet.sh "$MASSICOT_VERSION" target/release/massicot.exe modeles
           7z l "Massicot.$MASSICOT_VERSION.zip" | tail -n 3
+      - name: Essai de l'exécutable du paquet
+        run: bash scripts/essai-windows.sh "paquet/Massicot.$MASSICOT_VERSION/massicot.exe" target/release/massicot-essais.exe
       - name: Publication
         env:
           GH_TOKEN: ${{ github.token }}

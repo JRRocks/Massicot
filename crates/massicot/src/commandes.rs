@@ -7,6 +7,7 @@ use clap::{ArgGroup, Args, Subcommand, ValueHint};
 use serde::Serialize;
 
 use crate::erreur::{Erreur, Resultat};
+use crate::lecture::{ModeOcr, MoteurOcr};
 use crate::ops;
 use crate::ops::pages::{Position, Selection};
 
@@ -59,6 +60,14 @@ pub enum Commande {
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot inverser <FICHIER> [--pages <PAGES> | --paires | --impaires] --sortie <FICHIER> [options]")]
     Inverser(InverserArgs),
 
+    /// Donne le texte de chaque page : la couche texte du PDF, ou l'OCR pour les pages scannées.
+    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot texte <FICHIER> [--pages <PAGES>] [--ocr auto|toujours|jamais] [options]")]
+    Texte(TexteArgs),
+
+    /// Reconnaît le texte des pages scannées (OCR) et l'ajoute en texte invisible : le PDF devient cherchable.
+    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot ocr <FICHIER> --sortie <FICHIER> [options]")]
+    Ocr(OcrArgs),
+
     /// Mélange deux PDF page à page (recto et verso scannés à part) : 1-A, 2-B, 3-C…
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot melanger <RECTO> <VERSO> --sortie <FICHIER> [--verso-inverse] [options]")]
     Melanger(MelangerArgs),
@@ -76,6 +85,8 @@ pub fn nom(commande: &Commande) -> &'static str {
         Commande::Deplacer(_) => "deplacer",
         Commande::Inverser(_) => "inverser",
         Commande::Melanger(_) => "melanger",
+        Commande::Texte(_) => "texte",
+        Commande::Ocr(_) => "ocr",
     }
 }
 
@@ -252,6 +263,46 @@ pub struct InverserArgs {
     pub ecriture: Ecriture,
 }
 
+const AIDE_MOTEUR: &str = "Moteur d'OCR : « auto » (Tesseract en français s'il est installé, sinon le moteur intégré), « integre » (sans installation, mais il lit les lettres accentuées comme « ? »), « tesseract » (installé à part, langue française)";
+
+#[derive(Debug, Args)]
+pub struct TexteArgs {
+    /// Le PDF à lire.
+    #[arg(value_name = "FICHIER", value_hint = ValueHint::FilePath)]
+    pub fichier: PathBuf,
+
+    #[arg(long, value_name = "PAGES", help = AIDE_PAGES)]
+    pub pages: Option<String>,
+
+    /// Quand passer par l'OCR : « auto » (pages sans couche texte, par défaut), « toujours », « jamais ».
+    #[arg(long, value_name = "QUAND", value_enum, default_value_t = ModeOcr::Auto, hide_default_value = true, hide_possible_values = true)]
+    pub ocr: ModeOcr,
+
+    #[arg(long, value_name = "MOTEUR", value_enum, default_value_t = MoteurOcr::Auto, hide_default_value = true, hide_possible_values = true, help = AIDE_MOTEUR)]
+    pub moteur: MoteurOcr,
+}
+
+#[derive(Debug, Args)]
+pub struct OcrArgs {
+    /// Le PDF scanné.
+    #[arg(value_name = "FICHIER", value_hint = ValueHint::FilePath)]
+    pub fichier: PathBuf,
+
+    /// Reconnaît aussi les pages qui ont déjà du texte (par défaut, elles sont laissées telles quelles).
+    #[arg(long)]
+    pub toutes_les_pages: bool,
+
+    #[arg(long, value_name = "MOTEUR", value_enum, default_value_t = MoteurOcr::Auto, hide_default_value = true, hide_possible_values = true, help = AIDE_MOTEUR)]
+    pub moteur: MoteurOcr,
+
+    /// Résolution de lecture des pages, en points par pouce (300 par défaut).
+    #[arg(long, value_name = "DPI", default_value_t = 300, hide_default_value = true, value_parser = dpi)]
+    pub dpi: u32,
+
+    #[command(flatten)]
+    pub ecriture: Ecriture,
+}
+
 #[derive(Debug, Args)]
 pub struct MelangerArgs {
     /// Le premier PDF (par exemple les rectos).
@@ -280,6 +331,10 @@ pub struct MelangerArgs {
 
 fn entier_positif(s: &str) -> Result<usize, String> {
     s.trim().parse::<usize>().ok().filter(|n| *n > 0).ok_or_else(|| format!("« {s} » n'est pas un nombre entier supérieur à zéro"))
+}
+
+fn dpi(s: &str) -> Result<u32, String> {
+    s.trim().parse::<u32>().ok().filter(|d| (72..=600).contains(d)).ok_or_else(|| "la résolution doit être un nombre entre 72 et 600".into())
 }
 
 fn angle(s: &str) -> Result<i64, String> {
@@ -331,6 +386,11 @@ pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
         Commande::Inverser(a) => {
             rendu(ops::pages::inverser(&a.fichier, &a.selection.selection(), &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())
         }
+        Commande::Texte(a) => rendu(ops::ocr::texte(&a.fichier, a.pages.as_deref(), a.ocr, a.moteur)?, |r| r.texte()),
+        Commande::Ocr(a) => rendu(
+            ops::ocr::ocr(&a.fichier, &a.ecriture.sortie, a.toutes_les_pages, a.moteur, a.dpi as f32, a.ecriture.ecraser)?,
+            |r| r.texte(),
+        ),
         Commande::Melanger(a) => {
             let alternance = ops::melange::Alternance { pas_premier: a.pas_recto, pas_second: a.pas_verso, second_inverse: a.verso_inverse };
             rendu(ops::melange::melanger(&a.premier, &a.second, alternance, &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())
