@@ -205,6 +205,16 @@ impl Lecteur {
         self.moteur.as_ref().map(Moteur::nom)
     }
 
+    /// A picture of the page `largeur` pixels wide: (width, height, RGBA pixels).
+    pub fn vignette(&mut self, page: usize, largeur: u32) -> Resultat<(u32, u32, Vec<u8>)> {
+        let echelle = largeur as f32 / self.pages[page].width.max(1.0);
+        let image = self.rendu.render(RenderRequest { page, kind: RequestKind::Pixels, scale: echelle, ..Default::default() });
+        if let Some(e) = image.error {
+            return Err(Erreur::new(format!("page {} de « {} » illisible (détail : {e})", page + 1, self.chemin.display())));
+        }
+        Ok((image.width, image.height, image.rgba.to_vec()))
+    }
+
     /// The page's own text layer (visible or invisible text).
     pub fn couche_texte(&mut self, page: usize) -> Resultat<LecturePage> {
         let rendu = self.rendu.render(RenderRequest { page, kind: RequestKind::Text, scale: 1.0, ..Default::default() });

@@ -5,7 +5,7 @@ set -euo pipefail
 version="$1" exe="$2" models="$3"
 dir="paquet/Massicot.$version"
 rm -rf paquet && mkdir -p "$dir/modeles" "$dir/licences"
-cp "$exe" LICENSE-MIT LICENSE-APACHE NOTICE ATTRIBUTION.md "$dir/"
+cp "$exe" "$(dirname "$exe")/massicot-fenetre.exe" LICENSE-MIT LICENSE-APACHE NOTICE ATTRIBUTION.md "$dir/"
 cp README.md "$dir/LISEZMOI.md"
 cp "$models"/text-detection.onnx "$models"/text-recognition.onnx "$dir/modeles/"
 cp assets/fonts/OFL-*.txt licences/*.txt "$dir/licences/"

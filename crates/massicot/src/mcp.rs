@@ -6,19 +6,15 @@
 use std::io::{BufRead, Write};
 use std::path::{Component, Path, PathBuf};
 
-use clap::{ArgAction, CommandFactory, Parser, ValueHint};
+use clap::{ArgAction, CommandFactory, ValueHint};
 use serde_json::{Map, Value, json};
 
 use crate::cli::Cli;
-use crate::commandes::executer;
 use crate::erreur::{Erreur, Resultat};
+use crate::outils::{HORS_OUTILS, HORS_PARAMETRES};
 
 /// Protocol revisions this server speaks (the client's is used when known).
 const PROTOCOLES: [&str; 4] = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
-/// Commands that are not tools.
-const HORS_OUTILS: [&str; 2] = ["mcp", "accueil"];
-/// Arguments that are not tool parameters.
-const HORS_PARAMETRES: [&str; 3] = ["aide", "version", "json"];
 
 const INSTRUCTIONS: &str = "Massicot : boîte à outils PDF hors ligne (fusion, extraction, découpes, rotation, \
 suppression, déplacement, inversion, mélange recto-verso, texte des pages, OCR, découpe d'un lot à chaque en-tête \
@@ -150,74 +146,13 @@ pub fn outils() -> Vec<Value> {
     outils
 }
 
-fn texte_de(v: &Value) -> Option<String> {
-    match v {
-        Value::String(s) => Some(s.clone()),
-        Value::Number(n) => Some(n.to_string()),
-        Value::Bool(b) => Some(b.to_string()),
-        _ => None,
-    }
-}
-
-/// The command line equivalent to a tool call (paths resolved inside the root).
-fn ligne_de_commande(racine: &Racine, nom: &str, args: &Map<String, Value>) -> Resultat<Vec<String>> {
-    let cli = Cli::command();
-    let Some(cmd) = cli.find_subcommand(nom).filter(|c| !HORS_OUTILS.contains(&c.get_name())) else {
-        return Err(Erreur::new(format!("outil « {nom} » inconnu")));
-    };
-    for cle in args.keys() {
-        if !cmd.get_arguments().any(|a| a.get_id().as_str() == cle && !HORS_PARAMETRES.contains(&cle.as_str())) {
-            return Err(Erreur::new(format!("paramètre « {cle} » inconnu pour l'outil « {nom} »")));
-        }
-    }
-    let mut options = Vec::new();
-    let mut positions = Vec::new();
-    for a in cmd.get_arguments() {
-        let Some(v) = args.get(a.get_id().as_str()) else { continue };
-        let chemin = matches!(a.get_value_hint(), ValueHint::FilePath | ValueHint::DirPath | ValueHint::AnyPath);
-        let valeur = |x: &Value| -> Resultat<String> {
-            let t = texte_de(x).ok_or_else(|| Erreur::new(format!("paramètre « {} » : valeur de type inattendu", a.get_id())))?;
-            if chemin { Ok(racine.resoudre(&t)?.to_string_lossy().into_owned()) } else { Ok(t) }
-        };
-        let valeurs: Vec<String> = match (a.get_action(), v) {
-            (ArgAction::SetTrue, Value::Bool(false)) => continue,
-            (ArgAction::SetTrue, Value::Bool(true)) => vec![],
-            (ArgAction::SetTrue, _) => return Err(Erreur::new(format!("paramètre « {} » : vrai ou faux attendu", a.get_id()))),
-            (_, Value::Array(liste)) => liste.iter().map(valeur).collect::<Resultat<_>>()?,
-            (_, x) => vec![valeur(x)?],
-        };
-        if a.is_positional() {
-            positions.push((a.get_index().unwrap_or(0), valeurs));
-            continue;
-        }
-        let long = a.get_long().map(|l| format!("--{l}")).unwrap_or_else(|| format!("--{}", a.get_id()));
-        if valeurs.is_empty() {
-            options.push(long.clone());
-        }
-        for v in valeurs {
-            options.push(long.clone());
-            options.push(v);
-        }
-    }
-    positions.sort_by_key(|(i, _)| *i);
-    let mut argv = vec!["massicot".to_string(), nom.to_string()];
-    argv.extend(options);
-    if !positions.is_empty() {
-        argv.push("--".into());
-        argv.extend(positions.into_iter().flat_map(|(_, v)| v));
-    }
-    Ok(argv)
-}
-
 /// Runs a tool: Ok(result as JSON) or Err(French message).
 pub fn appeler(racine: &Racine, nom: &str, args: &Map<String, Value>) -> Result<Value, String> {
     if nom == "lister" {
         return lister(racine, args.get("dossier").and_then(Value::as_str)).map_err(|e| e.to_string());
     }
-    let argv = ligne_de_commande(racine, nom, args).map_err(|e| e.to_string())?;
-    let cli = Cli::try_parse_from(&argv).map_err(|e| crate::cli::french_parse_error(&e))?;
-    let commande = cli.commande().ok_or_else(|| "commande manquante".to_string())?;
-    executer(commande).map(|(json, _)| json).map_err(|e| e.to_string())
+    let chemin = |t: &str| racine.resoudre(t).map(|p| p.to_string_lossy().into_owned());
+    crate::outils::executer_outil(nom, args, &chemin).map(|(json, _)| json)
 }
 
 fn lister(racine: &Racine, dossier: Option<&str>) -> Resultat<Value> {

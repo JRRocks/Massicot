@@ -12,3 +12,7 @@
 /Massicot.*.exe
 # Version précédente téléchargée par la CI pour l'essai de mise à jour
 /precedente/
+# Images written by the screen tests when they differ from the reference
+/crates/massicot/tests/snapshots/*.new.png
+/crates/massicot/tests/snapshots/*.diff.png
+/crates/massicot/tests/snapshots/*.old.png

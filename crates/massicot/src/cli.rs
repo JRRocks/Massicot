@@ -79,6 +79,16 @@ where
         print!("{}", cmd.render_help());
         return ExitCode::SUCCESS;
     };
+    if let Commande::Fenetre(a) = &commande {
+        return match crate::fenetre::lancer(a.fichier.as_deref()) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                eprintln!("massicot : {e}");
+                crate::fenetre::signaler(&e.to_string());
+                ExitCode::from(1)
+            }
+        };
+    }
     if let Commande::Mcp(a) = &commande {
         let resultat = crate::mcp::Racine::new(&a.racine).and_then(|r| crate::mcp::servir(&r));
         return match resultat {

@@ -1,4 +1,4 @@
-//! Massicot: a PDF toolbox driven from the command line, an MCP server and (later) a window.
+//! Massicot: a PDF toolbox driven from the command line, an MCP server and a window.
 //!
 //! User-facing messages are French; code and comments are English.
 
@@ -6,8 +6,10 @@ pub mod accueil;
 pub mod cli;
 pub mod commandes;
 pub mod erreur;
+pub mod fenetre;
 pub mod lecture;
 pub mod mcp;
+pub mod outils;
 pub mod ops;
 pub mod pdf;
 

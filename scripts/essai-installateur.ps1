@@ -81,15 +81,12 @@ function VerifierInstalle([string] $V, [switch] $Complet) {
 
     Verifier (Test-Path $Raccourci) "raccourci du menu Démarrer : $Raccourci"
     $lnk = (New-Object -ComObject WScript.Shell).CreateShortcut($Raccourci)
-    Verifier ($lnk.TargetPath -like '*\WindowsPowerShell\v1.0\powershell.exe') "il lance PowerShell : $($lnk.TargetPath)"
-    Verifier ($lnk.Arguments -like "*-NoExit*& '$Exe' accueil*") "avec l'accueil de Massicot : $($lnk.Arguments)"
+    $lanceur = Join-Path $App 'massicot-fenetre.exe'
+    Verifier ($lnk.TargetPath -eq $lanceur) "il ouvre la fenêtre : $($lnk.TargetPath)"
+    Verifier (Test-Path $lanceur) 'lanceur de la fenêtre installé'
     Verifier ($lnk.IconLocation -like "$Exe,*") "son icône : $($lnk.IconLocation)"
-    # The shortcut's command, without -NoExit so that it ends.
-    $sortieConsole = Join-Path $Journaux 'console.txt'
-    $p = Start-Process -FilePath $lnk.TargetPath -ArgumentList ($lnk.Arguments -replace '-NoExit ', '') -WorkingDirectory $lnk.WorkingDirectory `
-        -RedirectStandardOutput $sortieConsole -NoNewWindow -Wait -PassThru
-    $texte = Get-Content $sortieConsole -Raw
-    Verifier ($p.ExitCode -eq 0 -and $texte -match "^Massicot $([regex]::Escape($V)) ") "la console du raccourci affiche l'accueil : $(($texte -split "`n")[0])"
+    $aide = (& $Exe --aide | Out-String)
+    Verifier ($aide -match 'fenetre') 'massicot.exe connaît la commande « fenetre »'
 
     $dansPath = @((PathUtilisateur) -split ';' | Where-Object { $_.Trim().TrimEnd('\') -eq $App })
     Verifier ($dansPath.Count -eq 1) 'dossier présent une fois dans le PATH de l''utilisateur'

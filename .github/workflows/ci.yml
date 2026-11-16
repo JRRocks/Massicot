@@ -32,12 +32,19 @@ jobs:
           key: modeles-ocr-${{ hashFiles('scripts/modeles-ocr.sh') }}
       - name: Modèles OCR
         run: bash scripts/modeles-ocr.sh modeles
-      - name: Tesseract (français), pour essayer le moteur optionnel
-        run: sudo apt-get install -y -q tesseract-ocr tesseract-ocr-fra > /dev/null && tesseract --list-langs
+      - name: Tesseract (français), pour essayer le moteur optionnel ; Vulkan logiciel, pour les tests d'écran de la fenêtre
+        run: sudo apt-get install -y -q tesseract-ocr tesseract-ocr-fra mesa-vulkan-drivers > /dev/null && tesseract --list-langs
       - name: Tests
         env:
           MASSICOT_EXIGER_TESSERACT: "1"
         run: cargo test --workspace --locked
+      - name: Images des tests d'écran (en cas d'écart)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: tests-ecran
+          path: crates/massicot/tests/snapshots/
+          if-no-files-found: ignore
 
   windows:
     name: Windows x64, paquet et publication
@@ -87,9 +94,10 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         shell: powershell
-        run: >-
-          ./scripts/captures-installateur.ps1 -Nouveau "Massicot.$env:MASSICOT_VERSION.exe"
-          -Ancien "precedente/Massicot.$env:PRECEDENTE.exe" -Dossier captures
+        run: |
+          ./target/release/massicot-essais.exe captures-pdf | Out-Null
+          ./scripts/captures-installateur.ps1 -Nouveau "Massicot.$env:MASSICOT_VERSION.exe" `
+            -Ancien "precedente/Massicot.$env:PRECEDENTE.exe" -Dossier captures -Pdf captures-pdf/essai.pdf
       - name: Captures (artefact)
         if: always()
         continue-on-error: true

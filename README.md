@@ -5,8 +5,8 @@ tourner, mélanger, reconnaître le texte des scans (OCR)… et **découper un l
 scannés à chaque en-tête reconnu par une expression régulière** (par exemple un procès-verbal
 par fichier), sans intelligence artificielle.
 
-Massicot se pilote en ligne de commande et par un serveur MCP (pour un agent comme Claude) ;
-une fenêtre viendra ensuite.
+Massicot s'utilise dans sa fenêtre, en ligne de commande, et par un serveur MCP (pour un agent
+comme Claude).
 
 ## Installer (Windows 64 bits)
 
@@ -16,7 +16,7 @@ une fenêtre viendra ensuite.
    au premier lancement, Windows SmartScreen peut avertir (« Informations complémentaires », puis
    « Exécuter quand même »).
 3. Massicot s'installe toujours dans `%LOCALAPPDATA%\Programs\Massicot`. Il apparaît dans le menu
-   Démarrer (le raccourci ouvre une console « Massicot » en attendant la fenêtre) et dans
+   Démarrer (le raccourci ouvre la fenêtre de Massicot) et dans
    Paramètres ▸ Applications ▸ Applications installées ; la commande `massicot` marche dans tout
    nouveau terminal (dossier ajouté au `PATH` de l'utilisateur).
 
@@ -31,6 +31,21 @@ Le dossier, le raccourci et l'entrée du `PATH` sont retirés ; vos PDF ne sont 
 où vous voulez (`massicot.exe` et le dossier `modeles\` côte à côte), puis, dans un terminal ouvert
 dans ce dossier : `.\massicot.exe --aide`. L'installateur reprend une copie décompressée à la main
 dans `%LOCALAPPDATA%\Programs\Massicot`.
+
+## La fenêtre
+
+Menu Démarrer ▸ **Massicot**, ou `massicot fenetre [fichier.pdf]` dans un terminal.
+
+- À gauche, les outils ; au centre, les pages du PDF ouvert (« Ouvrir un PDF… », ou glissez-le
+  dans la fenêtre) ; à droite, les réglages de l'outil choisi, puis son résultat.
+- Cliquez une page pour la sélectionner (Ctrl : plusieurs, Maj : une plage) : les outils qui
+  travaillent sur des pages (extraire, tourner, supprimer…) reprennent la sélection.
+- **Découpe par en-tête**, en quatre étapes : le PDF ; l'en-tête cherché (modèle « Procès-verbal
+  n° … » ou expression à saisir, et la bande du haut de page où le chercher, montrée en jaune sur
+  les pages) ; le rapport à blanc (un bloc par document, ses pages, l'en-tête lu, les alertes) ;
+  la découpe.
+- Chaque outil fait exactement ce que fait la commande du même nom (mêmes vérifications, mêmes
+  messages).
 
 ## Commandes
 
@@ -53,6 +68,7 @@ Chaque commande a son aide : `massicot <commande> --aide`. Les pages se comptent
 | `ocr` | Ajoute le texte reconnu, invisible : le scan devient cherchable | `massicot ocr scan.pdf --sortie cherchable.pdf` |
 | `decouper-regex` | Un fichier par en-tête trouvé (voir ci-dessous) | |
 | `mcp` | Serveur MCP pour Claude (voir plus bas) | |
+| `fenetre` | Ouvre la fenêtre (avec un PDF, s'il est donné) | `massicot fenetre lot.pdf` |
 
 ## Découper un lot de procès-verbaux par en-tête
 

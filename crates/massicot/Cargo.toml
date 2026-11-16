@@ -12,6 +12,11 @@ publish = false
 name = "massicot"
 path = "src/main.rs"
 
+# The Start menu shortcut's target: opens the window of massicot.exe without a console.
+[[bin]]
+name = "massicot-fenetre"
+path = "src/bin/massicot-fenetre.rs"
+
 [lints]
 workspace = true
 
@@ -29,6 +34,13 @@ pdfcraft-render = { path = "../render" }
 pdfcraft-ocr = { path = "../ocr" }
 pdfcraft-fonts = { path = "../fonts" }
 pdfcraft-content = { path = "../content" }
+# The window (`massicot fenetre`), in egui like PdfCraft (D-09).
+# Without egui's own fonts: the window uses Inter and JetBrains Mono, already shipped (ATTRIBUTION.md).
+eframe = { version = "0.37", default-features = false, features = ["accesskit", "wgpu", "x11", "wayland"] }
+
+[target.'cfg(windows)'.dependencies]
+# Native Windows file dialogs of the window.
+rfd = { version = "0.18", default-features = false }
 
 # Icon and version information of massicot.exe (build.rs); rc.exe comes from the Windows SDK.
 [target.'cfg(windows)'.build-dependencies]
@@ -36,4 +48,6 @@ winresource = { version = "0.1.34", default-features = false }
 
 [dev-dependencies]
 massicot-essais = { path = "../essais" }
+# Screen tests of the window: rendered and compared with tests/snapshots/ (wgpu).
+egui_kittest = { version = "0.37", features = ["eframe", "wgpu", "snapshot"] }
 tempfile = "3"

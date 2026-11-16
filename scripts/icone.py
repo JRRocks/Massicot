@@ -7,6 +7,7 @@ Needs Node.js with Playwright and its Chromium (to rasterise the SVG), and Pillo
 
 Outputs, in assets/icone/:
 - massicot.ico: 16 to 256 px, embedded in massicot.exe and used by the installer;
+- massicot-256.png: the window's icon;
 - assistant-petit-*.bmp: the installer's small header image (Inno Setup sizes, 100 % to 250 %);
 - assistant-grand-*.bmp: the installer's side image on the last page (same scales).
 """
@@ -74,6 +75,7 @@ def main():
     cotes_grandes = [round(w * 0.6) for w, _ in GRANDES]
     images = rasteriser(TAILLES_ICO + cotes_petites + cotes_grandes)
 
+    images[256].save(DOSSIER / "massicot-256.png")  # the window's icon (egui)
     ico = [images[t] for t in TAILLES_ICO]
     ico[-1].save(DOSSIER / "massicot.ico", format="ICO", sizes=[(t, t) for t in TAILLES_ICO], append_images=ico[:-1])
 

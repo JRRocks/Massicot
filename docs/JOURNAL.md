@@ -5,6 +5,39 @@
 
 ---
 
+## 2026-11-16 · Session cloud P3.1 et P3.2 : maquettes validées, fenêtre
+
+- **Branche et commit** : mise au point sur `claude/modest-edison-y0moby` (CI à la main, sans
+  publication), puis `main`.
+- **Réalisé** :
+  - P3.1 : deux variantes complètes en images (écran principal et quatre étapes de la découpe par
+    en-tête, lot de PV inventé) ; l'utilisateur a choisi la variante 1 « Atelier » (D-27).
+  - P3.2 : fenêtre egui dans `massicot.exe` (`massicot fenetre [FICHIER]`, D-28) : outils à gauche,
+    vignettes des pages au centre (dessinées en arrière-plan par le moteur de rendu de l'OCR),
+    sélection de pages (clic, Ctrl, Maj) reprise par les outils, réglages de chaque outil tirés de
+    sa commande, résultat et « Ouvrir le dossier » ; découpe par en-tête en quatre étapes (modèles
+    « Procès-verbal n° … », « Délibération n° … », bande du haut de page montrée en jaune, rapport à
+    blanc par bloc avec alertes, découpe avec le jeton) ; infos du PDF quand aucun outil n'est
+    choisi ; glisser-déposer ; dialogues de fichiers Windows ; message d'erreur en boîte de dialogue
+    si la fenêtre ne peut pas s'ouvrir.
+  - `outils.rs` : paramètres → ligne de commande → exécution, commun à MCP et à la fenêtre (sorti de
+    `mcp.rs`, sans changement de comportement : tests MCP verts).
+  - `massicot-fenetre.exe` (lanceur sans console) ; installateur : le raccourci et « Ouvrir
+    Massicot » ouvrent la fenêtre ; paquet et essais Windows à jour ; capture de la vraie fenêtre
+    sur le runner (non bloquante).
+  - Écarts avec la maquette : symboles des outils pris dans Inter et JetBrains Mono (« ÷ » pour
+    Découper, « ↔ » pour Mélanger, « ↗ » pour Extraire, « ↑↓ » pour Inverser), sans les émojis
+    ✂ et 📂 des boutons (absents de ces polices) ; « Voir le rapport » sur sa propre ligne.
+- **Décisions** : D-27, D-28.
+- **Vérifications** : `cargo test --workspace` vert (53 tests, dont 3 tests d'écran egui_kittest :
+  écran principal, quatre étapes de la découpe, extraction de pages sélectionnées qui écrit un PDF
+  de 3 pages).
+- **Non vérifié sur le PC** : R5 (la fenêtre sous Windows réel, l'absence de console, les
+  dialogues de fichiers, l'Explorateur).
+- **Prochaine étape** : CI et Release ; puis P4.2 (lot 1) après le retour de l'utilisateur.
+
+---
+
 ## 2026-11-16 · Session cloud P4.1 : fonctions de PDFsam Enhanced validées
 
 - **Branche et commit** : `main` (docs seulement).

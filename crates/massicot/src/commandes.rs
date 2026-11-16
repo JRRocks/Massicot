@@ -85,6 +85,10 @@ pub enum Commande {
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot melanger <RECTO> <VERSO> --sortie <FICHIER> [--verso-inverse] [options]")]
     Melanger(MelangerArgs),
 
+    /// Ouvre la fenêtre de Massicot (avec ce PDF, s'il est donné).
+    #[command(help_template = CMD_TEMPLATE, override_usage = "massicot fenetre [FICHIER]")]
+    Fenetre(FenetreArgs),
+
     /// Accueil de la console ouverte par le raccourci du menu Démarrer.
     #[command(hide = true, help_template = CMD_TEMPLATE, override_usage = "massicot accueil")]
     Accueil,
@@ -107,10 +111,18 @@ pub fn nom(commande: &Commande) -> &'static str {
         Commande::DecouperRegex(_) => "decouper-regex",
         Commande::Ocr(_) => "ocr",
         Commande::Accueil => "accueil",
+        Commande::Fenetre(_) => "fenetre",
     }
 }
 
 const AIDE_PAGES: &str = "Pages, comptées à partir de 1 : « 1-3,5,8- » (« 8- » : jusqu'à la fin ; « fin » : la dernière page)";
+
+#[derive(Debug, Args)]
+pub struct FenetreArgs {
+    /// Le PDF à ouvrir dans la fenêtre.
+    #[arg(value_name = "FICHIER", value_hint = ValueHint::FilePath)]
+    pub fichier: Option<PathBuf>,
+}
 
 #[derive(Debug, Args)]
 pub struct InfosArgs {
@@ -499,6 +511,7 @@ pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
             rendu(rapport, |r| r.texte())
         }
         Commande::Mcp(_) => Err(Erreur::new("le serveur MCP se lance depuis la ligne de commande : massicot mcp --racine <DOSSIER>")),
+        Commande::Fenetre(_) => Err(Erreur::new("la fenêtre s'ouvre depuis la ligne de commande : massicot fenetre")),
         Commande::Accueil => Ok((serde_json::json!({ "accueil": crate::accueil::texte_simple() }), crate::accueil::texte())),
         Commande::Melanger(a) => {
             let alternance = ops::melange::Alternance { pas_premier: a.pas_recto, pas_second: a.pas_verso, second_inverse: a.verso_inverse };

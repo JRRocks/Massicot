@@ -4,7 +4,8 @@
 param(
     [Parameter(Mandatory)] [string] $Nouveau,   # installer to publish
     [Parameter(Mandatory)] [string] $Ancien,    # installer of the previous release
-    [Parameter(Mandatory)] [string] $Dossier    # where the PNG files go
+    [Parameter(Mandatory)] [string] $Dossier,   # where the PNG files go
+    [Parameter(Mandatory)] [string] $Pdf        # an invented PDF to show in the window
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing, UIAutomationClient, UIAutomationTypes
@@ -133,19 +134,18 @@ function FermerConsoles {
         ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
 }
 
-# The shortcut's command in a console window of its own (conhost), as Windows 10 shows it.
-# Optional: on the runner, the console may not get a window of its own.
-function CapturerConsole {
+# The window, opened as the Start menu shortcut does (massicot-fenetre.exe), with an invented PDF.
+# Optional: a runner without a graphics adapter may not open it.
+function CapturerFenetre([string] $Pdf) {
     try {
-        $lnk = (New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path ([Environment]::GetFolderPath('Programs')) 'Massicot.lnk'))
-        Start-Process -FilePath "$env:WINDIR\System32\conhost.exe" -ArgumentList "`"$($lnk.TargetPath)`" $($lnk.Arguments)" -WorkingDirectory $lnk.WorkingDirectory | Out-Null
-        $c = Attendre 'Massicot' -Exact -Secondes 20
-        Start-Sleep -Seconds 4
-        Capturer $c '4-console-du-menu-demarrer'
+        Start-Process -FilePath (Join-Path $App 'massicot-fenetre.exe') -ArgumentList "`"$Pdf`"" | Out-Null
+        $f = Attendre 'Massicot' -Exact -Secondes 40
+        Start-Sleep -Seconds 6
+        Capturer $f '4-fenetre'
     } catch {
-        Write-Host "Console non capturée : $_"
+        Write-Host "Fenêtre non capturée : $_"
     } finally {
-        FermerConsoles
+        Get-Process massicot -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
     }
 }
 
@@ -170,7 +170,8 @@ $ecran = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
 Write-Host "Écran du runner : $($ecran.Width) x $($ecran.Height)"
 
 try {
-# 1. First install, then the Start menu console ("Ouvrir Massicot" is ticked).
+# 1. First install, then the window ("Ouvrir Massicot" is ticked; the window opened by the
+#    installer is closed, then opened again on an invented PDF).
 $p = Start-Process -FilePath $Nouveau -PassThru
 $w = Attendre 'Installation - Massicot' 'Installer'
 Capturer $w '1-pret-a-installer'
@@ -179,9 +180,9 @@ $w = Attendre 'Installation - Massicot' 'Terminer'
 Capturer $w '3-termine'
 Cliquer $w 'Terminer'
 Start-Sleep -Seconds 4
-FermerConsoles
+Get-Process massicot -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 $p.WaitForExit(60000) | Out-Null
-CapturerConsole
+CapturerFenetre (Resolve-Path $Pdf).Path
 
 # 2. Uninstall: confirmation, then the last message.
 Start-Process -FilePath (Join-Path $App 'unins000.exe')
@@ -202,7 +203,7 @@ Cliquer $w 'Mettre à jour'
 $w = Attendre 'Installation - Massicot' 'Terminer'
 Cliquer $w 'Terminer'
 Start-Sleep -Seconds 4
-FermerConsoles
+Get-Process massicot -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 $p.WaitForExit(60000) | Out-Null
 Silencieux (Join-Path $App 'unins000.exe') @()
 Write-Host 'Captures faites.'

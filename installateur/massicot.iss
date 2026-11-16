@@ -2,8 +2,8 @@
 ;   ISCC /DVersion=0.1.12 /DSource=<package folder> /DSortie=<output folder> massicot.iss
 ; Per-user install without administrator rights, always in %LOCALAPPDATA%\Programs\Massicot (Claude
 ; Code's MCP configuration points there); a newer installer installs over the previous one.
-; Choices validated on previews (DECISIONS.md, D-22): three pages, icon 1, the Start menu shortcut
-; opens a "Massicot" console until the window exists.
+; Choices validated on previews (DECISIONS.md, D-22): three pages, icon 1. The Start menu shortcut
+; opens the window (D-27), through massicot-fenetre.exe, which starts it without a console.
 
 #ifndef Version
   #error Version manquante : ISCC /DVersion=0.1.12 ...
@@ -78,11 +78,11 @@ UninstalledAll=%1 a été correctement désinstallé de cet ordinateur.%n%nVos P
 Source: "{#Source}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-; Until the window exists: a PowerShell console titled "Massicot", welcome text, then a prompt.
-Name: "{autoprograms}\Massicot"; Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "{code:ParametresConsole}"; WorkingDir: "{userdocs}"; IconFilename: "{app}\massicot.exe"; Comment: "Boîte à outils PDF"
+; The window of Massicot (massicot.exe fenetre, started without a console by massicot-fenetre.exe).
+Name: "{autoprograms}\Massicot"; Filename: "{app}\massicot-fenetre.exe"; WorkingDir: "{userdocs}"; IconFilename: "{app}\massicot.exe"; Comment: "Boîte à outils PDF"
 
 [Run]
-Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "{code:ParametresConsole}"; WorkingDir: "{userdocs}"; Description: "Ouvrir Massicot"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\massicot-fenetre.exe"; WorkingDir: "{userdocs}"; Description: "Ouvrir Massicot"; Flags: postinstall nowait skipifsilent
 
 [Code]
 const
@@ -103,16 +103,6 @@ end;
 procedure InitializeWizard();
 begin
   WizardForm.Caption := 'Installation - Massicot'; { as on the validated preview, without the version }
-end;
-
-{ Command line of the Start menu console: title, then the welcome text of massicot.exe. }
-function ParametresConsole(Param: String): String;
-var
-  Exe: String;
-begin
-  Exe := ExpandConstant('{app}\massicot.exe');
-  StringChangeEx(Exe, '''', '''''', True);
-  Result := '-NoExit -NoLogo -Command "$Host.UI.RawUI.WindowTitle = ''Massicot''; & ''' + Exe + ''' accueil"';
 end;
 
 { --- Pages --- }
