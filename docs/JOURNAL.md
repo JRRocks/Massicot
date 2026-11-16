@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-11-16 · Clôture du brief P3-P4 : fenêtre publiée (Release v0.1.28)
+
+- **Branche et commit** : `main` (docs seulement).
+- **Réalisé** : la CI du push P3.2 (run 28) a publié `v0.1.28` (`Massicot.0.1.28.exe`, 22,5 Mo, et
+  le zip) : tests Linux verts (dont les trois tests d'écran), essai de l'installateur vert (mise à
+  jour depuis l'installateur publié 0.1.24), fenêtre capturée sous Windows. Brief
+  `docs/BRIEF-P3-P4.md` supprimé : P4.1 validée et inscrite au plan, maquettes validées, P3.2
+  livrée.
+- **Non vérifié sur le PC** : R4 (installateur) et R5 (fenêtre).
+- **Prochaine étape** : retours de l'utilisateur sur R4 et R5 ; puis P4.2 (lot 1 « ranger les
+  scans »), à présenter d'abord en aperçus pour ce qui se voit dans la fenêtre.
+
+---
+
 ## 2026-11-16 · Session cloud P3.1 et P3.2 : maquettes validées, fenêtre
 
 - **Branche et commit** : mise au point sur `claude/modest-edison-y0moby` (CI à la main, sans
