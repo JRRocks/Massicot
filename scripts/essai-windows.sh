@@ -22,4 +22,12 @@ test "$(ls "$work/parties" | wc -l)" -eq 3
 "$exe" texte --ocr jamais --pages 1 "$work/essai-scan.pdf" | tr -d '\r' | grep -q "aucun texte"
 "$exe" ocr --moteur integre "$work/essai-scan.pdf" --sortie "$work/cherchable.pdf"
 "$exe" texte --ocr jamais --pages 1 "$work/cherchable.pdf" | tr -d '\r' | grep -q "VERBAL"
+
+# Découpe par en-tête d'essai sur le scan : mode à blanc, puis découpe avec son jeton.
+regex='PROCÈS-VERBAL N° (?<num>\d+)'
+"$exe" decouper-regex "$work/essai-scan.pdf" --regex "$regex" --zone-haute 30 --modele "PV-{num}.pdf" --moteur integre --dossier "$work/pv"
+jeton="$("$exe" decouper-regex "$work/essai-scan.pdf" --regex "$regex" --zone-haute 30 --modele "PV-{num}.pdf" --moteur integre --dossier "$work/pv" --json | tr -d '\r' | sed -n 's/.*"jeton": "\([0-9a-f]*\)".*/\1/p')"
+test -n "$jeton"
+"$exe" decouper-regex "$work/essai-scan.pdf" --regex "$regex" --zone-haute 30 --modele "PV-{num}.pdf" --moteur integre --dossier "$work/pv" --couper "$jeton"
+test -f "$work/pv/PV-1.pdf" && test -f "$work/pv/PV-5.pdf" && test -f "$work/pv/rapport-decoupe.json"
 echo "Essai réussi."

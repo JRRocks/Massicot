@@ -68,6 +68,15 @@ pub enum Commande {
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot ocr <FICHIER> --sortie <FICHIER> [options]")]
     Ocr(OcrArgs),
 
+    /// Découpe un lot (souvent scanné) à chaque page qui porte un en-tête reconnu par une expression régulière : un PDF par bloc, sans IA. Sans --couper, mode à blanc : rien n'est écrit, un rapport dit quelles pages ouvrent quel bloc.
+    #[command(
+        name = "decouper-regex",
+        help_template = CMD_TEMPLATE,
+        override_usage = "massicot decouper-regex <FICHIER> --regex <REGEX>... --dossier <DOSSIER> [--modele <MODELE>] [--zone-haute <POURCENT>] [--couper <JETON>] [options]",
+        after_help = "\nExemple : massicot decouper-regex lot.pdf --regex \"PROCÈS-VERBAL N° (?<num>\\d+)\" --zone-haute 30 --modele \"PV-{num}.pdf\" --dossier PV\nPuis, après lecture du rapport : la même commande avec --couper <JETON> (jeton donné par le mode à blanc)."
+    )]
+    DecouperRegex(DecouperRegexArgs),
+
     /// Mélange deux PDF page à page (recto et verso scannés à part) : 1-A, 2-B, 3-C…
     #[command(help_template = CMD_TEMPLATE, override_usage = "massicot melanger <RECTO> <VERSO> --sortie <FICHIER> [--verso-inverse] [options]")]
     Melanger(MelangerArgs),
@@ -86,6 +95,7 @@ pub fn nom(commande: &Commande) -> &'static str {
         Commande::Inverser(_) => "inverser",
         Commande::Melanger(_) => "melanger",
         Commande::Texte(_) => "texte",
+        Commande::DecouperRegex(_) => "decouper-regex",
         Commande::Ocr(_) => "ocr",
     }
 }
@@ -304,6 +314,64 @@ pub struct OcrArgs {
 }
 
 #[derive(Debug, Args)]
+pub struct DecouperRegexArgs {
+    /// Le PDF à découper (lot scanné ou PDF texte).
+    #[arg(value_name = "FICHIER", value_hint = ValueHint::FilePath)]
+    pub fichier: PathBuf,
+
+    /// Expression régulière de l'en-tête, par ex. « PROCÈS-VERBAL N° (?<num>\d+) ». Plusieurs --regex possibles : une page qui en vérifie une ouvre un bloc.
+    #[arg(long = "regex", value_name = "REGEX", required = true)]
+    pub regex: Vec<String>,
+
+    /// Le dossier où écrire les fichiers et le rapport (créé au besoin).
+    #[arg(short = 'd', long, value_name = "DOSSIER", value_hint = ValueHint::DirPath)]
+    pub dossier: PathBuf,
+
+    /// Nom des fichiers : {bloc} (numéro du bloc), {page}, {fichier} (nom du lot), {texte} (en-tête trouvé) et les groupes de la regex ({1}, {num}…). Par défaut « {fichier}-{bloc}.pdf ».
+    #[arg(long, value_name = "MODELE", default_value = ops::entetes::MODELE_PAR_DEFAUT, hide_default_value = true)]
+    pub modele: String,
+
+    /// Ne cherche l'en-tête que dans le haut de chaque page : ce pourcentage de sa hauteur (par ex. 30).
+    #[arg(long, value_name = "POURCENT", value_parser = pourcent)]
+    pub zone_haute: Option<u8>,
+
+    /// Quand passer par l'OCR : « auto » (pages sans couche texte, par défaut), « toujours », « jamais ».
+    #[arg(long, value_name = "QUAND", value_enum, default_value_t = ModeOcr::Auto, hide_default_value = true, hide_possible_values = true)]
+    pub ocr: ModeOcr,
+
+    #[arg(long, value_name = "MOTEUR", value_enum, default_value_t = MoteurOcr::Auto, hide_default_value = true, hide_possible_values = true, help = AIDE_MOTEUR)]
+    pub moteur: MoteurOcr,
+
+    /// Résolution de lecture des pages par OCR, en points par pouce (300 par défaut).
+    #[arg(long, value_name = "DPI", default_value_t = 300, hide_default_value = true, value_parser = dpi)]
+    pub dpi: u32,
+
+    /// Tient compte des majuscules et minuscules (ignorées par défaut).
+    #[arg(long)]
+    pub respecter_casse: bool,
+
+    /// Tient compte des accents (ignorés par défaut).
+    #[arg(long)]
+    pub respecter_accents: bool,
+
+    /// Pages avant le premier en-tête : « a-part » (un fichier à part, par défaut), « premier » (jointes au premier bloc) ou « ignorer ».
+    #[arg(long, value_name = "CHOIX", value_enum, default_value_t = ops::entetes::AvantPremier::APart, hide_default_value = true, hide_possible_values = true)]
+    pub avant_premier: ops::entetes::AvantPremier,
+
+    /// Coupe pour de bon, avec le jeton donné par le mode à blanc (mêmes fichier et options). Sans elle : mode à blanc.
+    #[arg(long, value_name = "JETON")]
+    pub couper: Option<String>,
+
+    /// Enregistre aussi le rapport JSON du mode à blanc dans ce fichier.
+    #[arg(long, value_name = "FICHIER", value_hint = ValueHint::FilePath)]
+    pub rapport: Option<PathBuf>,
+
+    /// Remplace les fichiers qui existent déjà.
+    #[arg(long)]
+    pub ecraser: bool,
+}
+
+#[derive(Debug, Args)]
 pub struct MelangerArgs {
     /// Le premier PDF (par exemple les rectos).
     #[arg(value_name = "RECTO", value_hint = ValueHint::FilePath)]
@@ -331,6 +399,10 @@ pub struct MelangerArgs {
 
 fn entier_positif(s: &str) -> Result<usize, String> {
     s.trim().parse::<usize>().ok().filter(|n| *n > 0).ok_or_else(|| format!("« {s} » n'est pas un nombre entier supérieur à zéro"))
+}
+
+fn pourcent(s: &str) -> Result<u8, String> {
+    s.trim().trim_end_matches('%').trim().parse::<u8>().ok().filter(|p| (1..=100).contains(p)).ok_or_else(|| "un pourcentage entre 1 et 100".into())
 }
 
 fn dpi(s: &str) -> Result<u32, String> {
@@ -391,6 +463,24 @@ pub fn executer(commande: &Commande) -> Resultat<(serde_json::Value, String)> {
             ops::ocr::ocr(&a.fichier, &a.ecriture.sortie, a.toutes_les_pages, a.moteur, a.dpi as f32, a.ecriture.ecraser)?,
             |r| r.texte(),
         ),
+        Commande::DecouperRegex(a) => {
+            let reglages = ops::entetes::Reglages {
+                regex: a.regex.clone(),
+                modele: a.modele.clone(),
+                ocr: a.ocr,
+                moteur: a.moteur,
+                dpi: a.dpi,
+                zone_haute: a.zone_haute,
+                respecter_casse: a.respecter_casse,
+                respecter_accents: a.respecter_accents,
+                avant_premier: a.avant_premier,
+            };
+            let rapport = ops::entetes::decouper_regex(&a.fichier, &a.dossier, &reglages, a.couper.as_deref(), a.ecraser)?;
+            if let (Some(chemin), true) = (&a.rapport, rapport.a_blanc) {
+                ops::entetes::enregistrer_rapport(&rapport, chemin, a.ecraser)?;
+            }
+            rendu(rapport, |r| r.texte())
+        }
         Commande::Melanger(a) => {
             let alternance = ops::melange::Alternance { pas_premier: a.pas_recto, pas_second: a.pas_verso, second_inverse: a.verso_inverse };
             rendu(ops::melange::melanger(&a.premier, &a.second, alternance, &a.ecriture.sortie, a.ecriture.ecraser)?, |r| r.texte())

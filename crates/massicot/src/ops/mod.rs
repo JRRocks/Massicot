@@ -2,6 +2,7 @@
 //! result (JSON for the MCP server and `--json`) that also renders as French text.
 
 pub mod decoupe;
+pub mod entetes;
 pub mod fusion;
 pub mod infos;
 pub mod melange;

@@ -48,7 +48,19 @@
   - CI : Tesseract `fra` installé sur le runner Linux, son test devient obligatoire
     (`MASSICOT_EXIGER_TESSERACT`) ; sur Windows, l'essai se fait sur l'exécutable du paquet
     (modèles trouvés à côté de lui) et comprend un OCR d'essai.
-- **Décisions** : D-12, D-13, D-14, D-15, D-16.
+  - P2.3 vérifiée : CI verte (run 5 : tests Linux avec Tesseract exigé, OCR d'essai sur
+    l'exécutable du paquet Windows), Release `v0.1.5`.
+  - P2.4 : commande `decouper-regex`. Texte de chaque page (couche texte, sinon OCR), normalisé
+    (accents et casse ignorés par défaut, espaces réduits) ; zone haute en % d'après la position
+    des mots ; plusieurs regex ; pages avant le premier en-tête à part (par défaut), jointes au
+    premier bloc ou ignorées ; modèle de nom (`{bloc}`, `{page}`, `{fichier}`, `{texte}`, groupes
+    de la regex), nom nettoyé, doublons suffixés -2, -3 ; mode à blanc par défaut avec rapport
+    JSON par bloc (pages, texte trouvé, groupes, extrait, confiance, alertes) et un jeton ; la
+    vraie découpe exige ce jeton (même fichier, mêmes réglages) et écrit `rapport-decoupe.json`
+    à côté des fichiers. Lecture tolérante pour le moteur OCR intégré (« ? » accepté à la place
+    d'une lettre ou d'un symbole, jamais d'un chiffre). Essai sur le runner Windows : mode à blanc
+    puis découpe d'un scan généré.
+- **Décisions** : D-12, D-13, D-14, D-15, D-16, D-17.
 - **Vérifications** : `cargo test --workspace` vert en session ; contrôle « dépôt public »
   sans signalement.
 - **Non vérifié sur le PC** : tout (aucun essai sur Windows réel).
