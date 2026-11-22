@@ -5,6 +5,23 @@
 
 ---
 
+## 2026-11-22 · Aperçu du zoom des pages validé (P3.3)
+
+- **Branche et commit** : `main` (docs seulement).
+- **Demande** (capture de la fenêtre maximisée sur un écran large : 25 pages par ligne, très
+  petites) : « Permettre un ctrl + middle mouse roll pour zoomer ou dézoomer. Le zoom doit juste
+  retirer ou ajouter 1 feuille en plus dans le visuel, par de zoom à mi-chemin ».
+- **Aperçu** : `docs/previews/zoom-des-pages.html` (aujourd'hui ; proposé à l'ouverture, à 8, 7 et
+  3 pages par ligne ; règles ; deux questions). Vérifié à 400 px de large.
+- **Réponses** : 1 A (le zoom agit aussi dans le rapport à blanc), 2 A (zoom gardé d'une ouverture
+  à l'autre), « Oui, code-le ». Décision D-31, tâche P3.3.
+- **Contrôle « dépôt public »** : fait avant le commit, rien à signaler (pages de l'aperçu
+  inventées, aucune capture réelle).
+- **Prochaine étape** : code par une session cloud (pas de chaîne Rust sur le PC), puis
+  installation de la Release et essai réel sur le PC, captures à côté de l'aperçu.
+
+---
+
 ## 2026-11-22 · Session PC : 0.1.29 installée, fenêtre essayée, icône confirmée
 
 - **Branche et commit** : `main` (docs seulement).
