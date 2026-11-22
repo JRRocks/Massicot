@@ -5,6 +5,39 @@
 
 ---
 
+## 2026-11-22 · Session PC : 0.1.29 installée, fenêtre essayée, icône confirmée
+
+- **Branche et commit** : `main` (docs seulement).
+- **Réalisé** :
+  - `Massicot.0.1.29.exe` (Release) installé en mode silencieux par-dessus la 0.1.9 posée à la
+    main : `massicot --version`, entrée de désinstallation, raccourci du menu Démarrer et PATH vus.
+    L'exécutable encore ouvert par des serveurs MCP a été renommé par l'installateur
+    (`massicot.exe.ancien-N`) sans bloquer l'installation ; ces serveurs gardent l'ancienne version
+    jusqu'au redémarrage de leur session Claude.
+  - Raccourci « Massicot » posé dans le dossier d'applications du bureau de l'utilisateur
+    (`Desktop\APP`), vers `massicot-fenetre.exe`, avec l'icône. Lancée depuis ce raccourci, la
+    fenêtre s'ouvre (« Prêt · Massicot 0.1.29 ») ; aucune console visible (relevé des fenêtres
+    avant et après le lancement : seule la fenêtre Massicot apparaît).
+  - Fenêtre pilotée sur un vrai lot de 264 pages (`essais-prives/`) : vignettes affichées ;
+    « Découpe par en-tête » en quatre étapes avec une regex d'une ligne sur l'en-tête : rapport à
+    blanc de 56 blocs, les mêmes coupes que la méthode LLM du 16 ; découpe écrite : 56 fichiers,
+    264 pages au total. Captures gardées hors dépôt.
+  - R2 vérifié : dans une session ouverte après l'ajout, Claude a décrit le lot par l'outil MCP
+    `infos`. P2.5 passe à ✅.
+  - Icône : trois variantes nouvelles montrées sur une planche (page coupée, massicot à levier,
+    « M » sur une page) ; l'utilisateur garde l'icône de D-22 (D-30).
+- **Leçons (pilotage de la fenêtre par script, pour les captures)** : `SendKeys` perd les
+  caractères AltGr (`\`, `{`, `}`) sur un clavier AZERTY : taper le texte par `SendInput` en
+  caractères Unicode. Les scripts PowerShell 5.1 qui contiennent des accents s'enregistrent en
+  UTF-8 avec BOM. Capture par `PrintWindow` (drapeau 2), processus déclaré « DPI par écran ».
+- **Contrôle « dépôt public »** : fait avant le commit, rien à signaler.
+- **Non vérifié sur le PC** : SmartScreen et écrans de l'assistant (installation silencieuse),
+  lancement depuis le menu Démarrer, glisser-déposer, « Ouvrir le dossier », un autre outil de la
+  fenêtre, mise à jour par la Release suivante, désinstallation.
+- **Prochaine étape** : P4.2 (lot 1 « ranger les scans »), aperçus d'abord pour ce qui se voit.
+
+---
+
 ## 2026-11-16 · Clôture du brief P3-P4 : fenêtre publiée (Release v0.1.28)
 
 - **Branche et commit** : `main` (docs seulement).
