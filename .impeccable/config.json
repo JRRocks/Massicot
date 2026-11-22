@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "docs/previews/zoom-des-pages.html"
+        ],
+        "createdAt": "2026-11-22T20:12:33.391Z",
+        "reason": "Claude: scaled-down mock of the app window (margins drawn at mock scale) and compact keycap/pill badges are intentional in this preview page"
+      }
+    ]
+  }
+}

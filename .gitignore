@@ -16,3 +16,6 @@
 /crates/massicot/tests/snapshots/*.new.png
 /crates/massicot/tests/snapshots/*.diff.png
 /crates/massicot/tests/snapshots/*.old.png
+
+# Design hook cache (local)
+.impeccable/hook.cache.json
